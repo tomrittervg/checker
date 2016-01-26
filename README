@@ -1,0 +1,8 @@
+
+# Enter the following into your cron
+
+First edit the ... to your path
+
+    * * * * * .../checker/main.py -m cron -c minute >/dev/null 2>&1
+    0 * * * * .../checker/main.py -m cron -c hour   >/dev/null 2>&1
+
