@@ -46,7 +46,6 @@ if __name__ == "__main__":
     requests_log.setLevel(logging.CRITICAL)
     logging.basicConfig(format="%(asctime)s:%(levelname)s:  %(message)s")
     log = logging.getLogger()
-    log.setLevel(logging.DEBUG)
     if args.v:
         log.setLevel(logging.DEBUG)
 
