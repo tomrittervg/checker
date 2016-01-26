@@ -8,6 +8,8 @@ import smtplib
 class JobFrequency:
     MINUTE = "minute"
     HOUR = "hour"
+    DAY = "day"
+    DAY_NOON = "day_noon"
 
 class JobBase:
     def __init__(self):
