@@ -49,5 +49,6 @@ def sendEmail(config, subject, body, to=""):
         server.sendmail(FROM, to, message)
         server.close()
         return True
-    except:
+    except Exception as e:
+        logging.critical("Caught an exception trying to send an email:" + str(e))
         return False
