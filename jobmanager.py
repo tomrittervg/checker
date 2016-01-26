@@ -28,8 +28,16 @@ class JobManager:
         
     def mark_jobs_ran(self):
         logging.debug("Marking jobs as run successfully.")
-        requests.post("http://localhost:5001/", data="True")
+        try:
+            requests.post("http://localhost:5001/", data="True")
+        except:
+            pass
+            #Nothing we can do except hope our peers save us
 
     def mark_jobs_ran_with_error(self):
         logging.warning("Marking jobs as run unsuccessfully.")
-        requests.post("http://localhost:5001/", data="False")
+        try:
+            requests.post("http://localhost:5001/", data="False")
+        except:
+            pass
+            #Nothing we can do except hope our peers save us
