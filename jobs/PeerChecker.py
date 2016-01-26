@@ -5,6 +5,7 @@ import base64
 import datetime 
 
 import imaplib
+import requests
 
 import JobBase
 
@@ -18,22 +19,28 @@ class PeerChecker(JobBase.JobBase):
             peer = p[1].split(',')
             peerOK = False
 
+            subject = ""
+            body = ""
+
             try:
                 response = requests.get(peer[0])
                 if response.status_code != 200:
                     peerOK = False
                     subject = peer[0] + " returned a non-standard status code."
+                    body = str(response.status_code) + "\n" + response.content
                 else:
                     if "True" in response.content:
                         peerOK = True
                     elif "False" in response.content:
                         peerOK = False
                         subject = peer[0] + " reports it cannot send email."
-            except:
+                        body = str(response.status_code) + "\n" + response.content
+            except Exception as e:
                 peerOK = False
                 subject = peer[0] + " is not responding."
+                body = str(e)
             
             if not peerOK:
-                if not self.sendEmail(subject, "", peer[1]):
+                if not self.sendEmail(subject, body, peer[1]):
                     testSuccess = False
         return testSuccess

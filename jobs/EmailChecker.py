@@ -40,7 +40,7 @@ class EmailChecker(JobBase.JobBase):
         M.logout()
         if not foundSubject:
             #This may not work, but try anyway
-            self.sendEmail("Email Fetch Failure", "Body")
+            self.sendEmail("Email Fetch Failure", "")
             return False
         else:
             return True
