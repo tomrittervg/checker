@@ -39,7 +39,8 @@ if __name__ == "__main__":
         not config.get('email', 'imapserver'):
         print "Sending email address is not configured"
         sys.exit(1)
-    if not config.get('alertcontact', 'default'):
+    if not config.get('general', 'servername') or \
+        not config.get('general', 'alertcontact'):
         print "Default alert contact is not configured"
         sys.exit(1)
 

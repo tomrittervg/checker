@@ -34,11 +34,11 @@ def sendEmail(config, subject, body, to=""):
     FROM = config.get('email', 'user')
     PASS = config.get('email', 'pass')
     if not to:
-        to = config.get('alertcontact', 'default')
+        to = config.get('general', 'alertcontact')
 
     # Prepare actual message
     # Avoid gmail threading
-    subject = subject + "       " + str(random.random())
+    subject = "[" + config.get('general', 'servername') + "] " + subject + "       " + str(random.random())
     message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" \
         % (FROM, ", ".join(to), subject, body)
     try:

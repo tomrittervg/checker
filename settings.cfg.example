@@ -1,5 +1,6 @@
-[alertcontact]
-default=youremail@example.com
+[general]
+servername=uniqueservername
+alertcontact=youremail@example.com
 
 [email]
 user=agmailaccountyoucreate@gmail.com
