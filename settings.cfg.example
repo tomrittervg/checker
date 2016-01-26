@@ -1,0 +1,16 @@
+[alertcontact]
+default=youremail@example.com
+
+[email]
+user=agmailaccountyoucreate@gmail.com
+pass=yourpassword
+smtpserver=smtp.gmail.com
+smtpport=587
+imapserver=imap.gmail.com
+#I create a filter that automatically deletes my sent messages.
+# This way, anyone who hacks the account only sees the last 30 days of messages I've sent
+ideletesentmessagesautomatically=True
+
+[peers]
+peer1=http://someserver.com:5000,admin@someserverbackup.com
+peer2=http://someotherserver.com:5000,admin@someotherserver.com
