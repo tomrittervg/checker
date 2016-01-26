@@ -28,7 +28,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = ConfigParser.ConfigParser()
-    config.read('settings.cfg')
+    configfile = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.cfg')
+    if args.v:
+        print "[Pre-Logging] Reading config from", configfile
+    config.read(configfile)
     if not config.get('email', 'user') or \
         not config.get('email', 'pass') or \
         not config.get('email', 'smtpserver') or \
