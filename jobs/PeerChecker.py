@@ -31,9 +31,17 @@ class PeerChecker(JobBase.JobBase):
                 else:
                     if "True" in response.content:
                         peerOK = True
-                    elif "False" in response.content:
+                    elif "MailProblem" in response.content:
                         peerOK = False
                         subject = peer[0] + " reports it cannot send email."
+                        body = str(response.status_code) + "\n" + response.content
+                    elif "JobProblem" in response.content:
+                        peerOK = False
+                        subject = peer[0] + " reports its jobs are not running."
+                        body = str(response.status_code) + "\n" + response.content
+                    else:
+                        peerOK = False
+                        subject = peer[0] + " had an unexpected response."
                         body = str(response.status_code) + "\n" + response.content
             except Exception as e:
                 peerOK = False

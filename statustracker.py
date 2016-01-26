@@ -11,9 +11,11 @@ class StatusTracker:
         self.lastRunJob = 0
         self.config = config
         
-    def isAllGood(self):
-        return self.emailNotificationsAreWorking and \
-            time.time() - self.lastRunJob < 120
+    def isMailGood(self):
+        return self.emailNotificationsAreWorking
+
+    def isJobsGood(self):
+        return time.time() - self.lastRunJob < 120
 
     def markJobRan(self):
         self.lastRunJob = time.time()

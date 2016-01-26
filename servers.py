@@ -11,12 +11,15 @@ class StatusSite(resource.Resource):
         resource.Resource.__init__(self)
         self.statusTracker = statusTracker
     def render_GET(self, request):
-        if self.statusTracker.isAllGood():
+        if self.statusTracker.isMailGood() and self.statusTracker.isJobsGood():
             logging.debug("Indicating that everything seems to be okay")
             s = "True"
-        else:
-            logging.warn("Indicating that everything does not seem to be okay")
-            s = "False"
+        elif not self.statusTracker.isMailGood():
+            logging.warn("Indicating that we have a problem with Mail")
+            s = "MailProblem"
+        elif not self.statusTracker.isJobsGood():
+            logging.warn("Indicating that we have a problem with Jobs")
+            s = "JobProblem"
 
         request.setResponseCode(200)
         return s
