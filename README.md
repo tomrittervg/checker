@@ -21,7 +21,7 @@ Checker can't (reliably) run by itself. It needs to have at least one peer. Chec
 
 When checker sees that one of its peers has reported one of the three error conditions, it emails that peer's admin.  
 
-Peering should be symmetrical - you check your friend's instance and your friend checks yours. Or you can run it yourself on two servers.
+Peering should be symmetrical - you check your friend's instance and your friend checks yours. Or you can run it yourself on two servers (when you do this, you only need one server to run all the jobs, the other one can just run as a no-job peer).
 
 # Custom Jobs
 
@@ -73,6 +73,5 @@ First edit the ... to your path, then enter the following into your cron
   
 # TODO
 
-* Make checker a little more intelligent and don't expect a job to run every minute.
 * Implement throttling logic so if a job fails, you don't get an email every single time it fails. Instead get one email when it starts failing and then one email when it's back up. (And let this be customizable.)
 * Make JobBase.execute more intuitive for job authors. Remove the "return if the mail sent successfully" requirement.
