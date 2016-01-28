@@ -11,6 +11,8 @@ imapserver=imap.gmail.com
 #I create a filter that automatically deletes my sent messages.
 # This way, anyone who hacks the account only sees the last 30 days of messages I've sent
 ideletesentmessagesautomatically=True
+#If set, append a random number to prevent gmail threading
+bustgmailthreading=False
 
 [peers]
 peer1=http://someserver.com:5000,admin@someserverbackup.com

@@ -40,7 +40,9 @@ def sendEmail(config, subject, body, to=""):
 
     # Prepare actual message
     # Avoid gmail threading
-    subject = "[" + config.get('general', 'servername') + "] " + subject + "       " + str(random.random())
+    subject = "[" + config.get('general', 'servername') + "] " + subject + "       " 
+    if config.get('email', 'bustgmailthreading'):
+        subject += str(random.random())
     message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" \
         % (FROM, ", ".join(to), subject, body)
     try:
