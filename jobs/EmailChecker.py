@@ -29,7 +29,7 @@ class EmailChecker(JobBase.JobBase):
         M.login(USER, PASS)
         
         #If we have set up a filter to auto-delete messages from ourself
-        if self.config.get('email', 'ideletesentmessagesautomatically'):
+        if self.config.getboolean('email', 'ideletesentmessagesautomatically'):
             logdetails += "Switching to trash\n"
             M.select("[Gmail]/Trash")
         
