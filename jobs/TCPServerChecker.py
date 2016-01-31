@@ -14,13 +14,13 @@ class TCPServerChecker(JobSpawner.JobSpawner):
 
     class ServerChecker(JobBase.JobBase):
         def __init__(self, config, ip, port, friendlyName, frequency, failureNotificationFrequency):
-            JobBase.JobBase.__init__(self, config, ip, port, friendlyName, frequency, failureNotificationFrequency)
             self.config = config
             self.ip = ip
             self.port = port
             self.friendlyName = friendlyName + "(" + self.ip + ":" + str(self.port) + ")"
             self.frequency = frequency
             self.failureNotificationFrequency = failureNotificationFrequency
+            super(TCPServerChecker.ServerChecker, self).__init__(config, ip, port, friendlyName, frequency, failureNotificationFrequency)
 
         def getName(self):
             return str(self.__class__) + " for " + self.friendlyName

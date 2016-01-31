@@ -13,9 +13,9 @@ import JobSpawner
 class PeerChecker(JobSpawner.JobSpawner):
     class IndividualPeerChecker(JobBase.JobBase):
         def __init__(self, config, checkurl, notificationAddress):
-            JobBase.JobBase.__init__(self, config, checkurl, notificationAddress)
             self.checkurl = checkurl
             self.notificationAddress = notificationAddress
+            super(PeerChecker.IndividualPeerChecker, self).__init__(config, checkurl, notificationAddress)
 
         def executeEvery(self):
             return JobBase.JobFrequency.HOUR

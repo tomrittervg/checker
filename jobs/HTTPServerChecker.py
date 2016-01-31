@@ -14,11 +14,11 @@ class HTTPServerChecker(JobSpawner.JobSpawner):
 
     class ServerChecker(JobBase.JobBase):
         def __init__(self, config, url, frequency, failureNotificationFrequency):
-            JobBase.JobBase.__init__(self, config, url, frequency, failureNotificationFrequency)
             self.config = config
             self.url = url
             self.frequency = frequency
             self.failureNotificationFrequency = failureNotificationFrequency
+            super(HTTPServerChecker.ServerChecker, self).__init__(config, url, frequency, failureNotificationFrequency)
 
         def getName(self):
             return str(self.__class__) + " for " + self.url

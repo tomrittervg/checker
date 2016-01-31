@@ -21,10 +21,10 @@ class JobFailureNotificationFrequency:
     EVERYHOUR = "hour"
     ONSTATECHANGE = "state_change"
 
-class JobBase:
+class JobBase(object):
     def __init__(self, config, *args):
         self.config = config
-        self.stateName = hashlib.sha1(self.getName() + "|" + "|".join(args)).hexdigest()
+        self.stateName = hashlib.sha1(self.getName() + "|" + "|".join([str(a) for a in args])).hexdigest()
 
     """ Return a friendly name to identify this Job"""
     def getName(self):
