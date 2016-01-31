@@ -8,6 +8,8 @@ class JobState:
 	def __init__(self, name):
 		self.name = name
 		self.CurrentStateSuccess = True
+		self.FirstFailureTime = 0
+		self.LastNotifyTime = 0
 
 	def markFailedAndNotify(self):
 		if self.CurrentStateSuccess:
@@ -38,12 +40,12 @@ class JobState:
 		ret  = self.name + "|" 
 		ret += "Succeeding" if self.CurrentStateSuccess else "Failing"
 		ret += "|" + str(self.FirstFailureTime)
-		ret += "|" + str(self.LastNotifyTime)
+		ret += "|" + str(self.LastNotifyTime) + "\n"
 		return ret
 
 	@staticmethod
 	def Parse(line):
-		s = JobState()
+		s = JobState("")
 
 		line = line.strip()
 		parts = line.split("|")

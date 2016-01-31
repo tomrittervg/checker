@@ -8,6 +8,7 @@ import imaplib
 import requests
 
 import JobBase
+import JobSpawner
 
 class PeerChecker(JobSpawner.JobSpawner):
     class IndividualPeerChecker(JobBase.JobBase):
@@ -51,8 +52,7 @@ class PeerChecker(JobSpawner.JobSpawner):
                 self.subject = self.checkurl + " is not responding."
                 self.body = str(e)
             return peerOK
-            
-            return peerOK:
+
         def onFailure(self):
             return self.sendEmail(self.subject, self.body, self.notificationAddress)
         def onStateChangeSuccess(self):

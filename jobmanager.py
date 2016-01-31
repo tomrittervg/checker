@@ -47,7 +47,7 @@ class JobManager:
                     lastRunStatus = self.state[thisJob.getStateName()]
                 except:
                     logging.warn("No state was found for " + thisJob.getStateName() + \
-                                 "\nMaking up a dummy state for it.")
+                                 ", making up a dummy state for it.")
                     lastRunStatus = self.state[thisJob.getStateName()] = JobState.Empty(thisJob.getStateName())
 
                 logging.info("Executing " + thisJob.getName())
