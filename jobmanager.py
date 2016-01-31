@@ -1,30 +1,75 @@
 #!/usr/bin/env python
 
+import os
 import time
 import logging
+import datetime
 import requests
 
-from jobs import JobFinder
+from jobs import JobFinder, JobBase
+from jobstate import JobState
 
 class JobManager:
     def __init__(self, config):
         jobsFinder = JobFinder(config)
         self.jobs = jobsFinder.get_jobs()
         self.config = config
+        self.statefile = config.get('general', 'statefile')
+        self._load_state()
+
+    def _load_state(self):
+        self.state = {}
+        if not os.path.isfile(self.statefile):
+            logging.warn("Could not find statefile at " + self.statefile + "; creating a new one.")
+        else:
+            f = open(self.statefile, "r")
+            lines = f.readlines()
+            for l in lines:
+                s = JobState.Parse(l)
+                self.state[s.name] = s
+            f.close()
+
+    def _save_state(self):
+        f = open(self.statefile, "w")
+        for i in self.state:
+            f.write(self.state[i].serialize())
+        f.close()
 
     def list_jobs(self):
         return self.jobs
     
     def execute_jobs(self, cronmode):
         logging.info("Executing jobs...")
-        success = True
+        emailWorks = True
         for thisJob in self.jobs:
-            thisJob.setConfig(self.config)
             if thisJob.shouldExecute(cronmode):
+                try:
+                    lastRunStatus = self.state[thisJob.getStateName()]
+                except:
+                    logging.warn("No state was found for " + thisJob.getStateName() + \
+                                 "\nMaking up a dummy state for it.")
+                    lastRunStatus = self.state[thisJob.getStateName()] = JobState.Empty(thisJob.getStateName())
+
                 logging.info("Executing " + thisJob.getName())
                 if not thisJob.execute():
-                    success = False
-        return success
+                    #Unsuccessful run
+                    logging.info("Execution of " + thisJob.getName() + " failed")
+                    if thisJob.shouldNotifyFailure(lastRunStatus):
+                        lastRunStatus.markFailedAndNotify()
+                        logging.info("Notifying of failure for " + thisJob.getName())
+                        if not thisJob.onFailure():
+                            emailWorks = False
+                    else:
+                        lastRunStatus.markFailedNoNotify()
+                else:
+                    #Successful Run
+                    logging.info("Execution of " + thisJob.getName() + " succeeded")
+                    if lastRunStatus.CurrentStateSuccess == False and thisJob.notifyOnFailureEvery() == JobBase.FailureNotificationFrequency.ONSTATECHANGE:
+                        if not thisJob.onStateChangeSuccess():
+                            emailWorks = False
+                    lastRunStatus.markSuccessful()
+        self._save_state()
+        return emailWorks
         
     def mark_jobs_ran(self):
         logging.debug("Marking jobs as run successfully.")

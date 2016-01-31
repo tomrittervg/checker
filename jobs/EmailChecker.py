@@ -12,6 +12,8 @@ import JobBase
 class EmailChecker(JobBase.JobBase):
     def executeEvery(self):
         return JobBase.JobFrequency.HOUR
+    def notifyOnFailureEvery(self):
+        return JobBase.JobFailureNotificationFrequency.EVERYTIME
     def execute(self):
         USER = self.config.get('email', 'user')
         PASS = self.config.get('email', 'pass')
@@ -47,9 +49,9 @@ class EmailChecker(JobBase.JobBase):
                 foundSubject = True
         M.close()
         M.logout()
-        if not foundSubject:
-            #This may not work, but try anyway
-            self.sendEmail("Email Fetch Failure", logdetails)
-            return False
-        else:
-            return True
+
+        self.logdetails = logdetails
+        return foundSubject
+    def onFailure(self):
+        return self.sendEmail("Email Fetch Failure", self.logdetails)
+            

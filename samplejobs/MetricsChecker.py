@@ -12,6 +12,8 @@ import JobBase
 class MetricsChecker(JobBase.JobBase):
     def executeEvery(self):
         return JobBase.JobFrequency.DAY_NOON
+    def notifyOnFailureEvery(self):
+        return JobBase.JobFailureNotificationFrequency.EVERYTIME
     def execute(self):
         body = ""
         ys = datetime.date.today() - datetime.timedelta(hours=24)
@@ -27,6 +29,9 @@ class MetricsChecker(JobBase.JobBase):
         if body:
             logging.warn("tor metrics is broken?")
             logging.warn(body)
-            return self.sendEmail("tor metrics is broken?", body)
+            self.logdetails = body
+            return False
         else:
             return True
+    def onFailure(self):
+        return self.sendEmail("tor metrics is broken?", self.logdetails)

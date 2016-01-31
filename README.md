@@ -29,21 +29,22 @@ This wouldn't be any good if you couldn't specify your own custom jobs. There ar
 
 ### Inherit JobBase
 
-JobBase is the base for a job, and should be used when you have a single, custom job you want to run.  Your job needs to match the name of the file it is in. You should override two functions:
+JobBase is the base for a job, and should be used when you have a single, custom job you want to run.  Your job needs to match the name of the file it is in. You should override three (or four) functions:
 
 * executeEvery
  * This should return a JobFrequency constant indicating how often you want the job to run
+* notifyOnFailureEvery
+ * This should return a JobFailureNotificationFrequency constant indicating how often you want to be notified about a (continually) failing job
 * execute
- * This does the work
- * It should _not_ return False if it fails, instead it should return False _only if it cannot send email_.  If this function returns false, checker assumes it cannot send mail. 
-
-An appropriate way to end the function would be:
-
-    if not success:
-        return self.sendEmail("Failed executing bob-job", failureMessage)
-    else:
-        return True
-
+ * This does the work. It returns True if the job succeeded or False if it didn't
+* onFailure
+ * This is called if the job failed _and_ the admin should be notified. You should return if the email could be sent or not.
+ * E.G. return self.sendEmail("Job Failed", self.details_of_error)
+* onStateChangeSuccess
+ * This is called if a) you specified JobFailureNotificationFrequency.ONSTATECHANGE in notifyOnFailureEvery
+ * A job was previously failing but just suceeded
+ * Like onFailure, it should return if the email could be sent or not.
+ * E.G. return self.sendEmail("Job Suceeded", "")
 
 ### Inherit JobSpawner
 

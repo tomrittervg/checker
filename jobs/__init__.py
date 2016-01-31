@@ -44,10 +44,10 @@ class JobFinder:
                             # It has to do with JobBase being imported multiple times (within jobs) or something
                             if base.__name__ == 'JobBase':
                                 # A job was found, keep it
-                                self._jobs.add(obj())
+                                self._jobs.add(obj(self.config))
                             elif base.__name__ == 'JobSpawner':
                                 spawner = obj()
-                                for j in spawner.get_sub_jobs():
+                                for j in spawner.get_sub_jobs(self.config):
                                     self._jobs.add(j)
 
     

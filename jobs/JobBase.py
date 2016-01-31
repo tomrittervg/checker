@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
+import time
 import random
 import logging
+import datetime
 
 import smtplib
 
@@ -11,26 +13,99 @@ class JobFrequency:
     DAY = "day"
     DAY_NOON = "day_noon"
 
+class JobFailureNotificationFrequency:
+    EVERYTIME = "every"
+    EVERYFIVEMINUTES = "5min"
+    EVERYTENMINUTES = "10min"
+    EVERYHOUR = "hour"
+    ONSTATECHANGE = "state_change"
+
 class JobBase:
-    def __init__(self):
-        self.config = None
+    def __init__(self, config):
+        self.config = config
+
+    """ Return a friendly name to identify this Job"""
     def getName(self):
         return str(self.__class__)
+
+    """Return a non-friendly, guarenteed-unique name to identify this Job
+       Needed to keep track of the job's run history. 
+       Takes into account the contructor arguments to uniquely identify JobSpawner-jobs"""
+    def getStateName(self):
+        return self.getName()
+
+    """Returns True if the job should execute this cron-run"""
     def shouldExecute(self, cronmode):
         frequency = self.executeEvery()
         if cronmode == frequency:
             return True
         return False
-    def setConfig(self, config):
-        self.config = config
-       
+
+    """Returns True if the jobmanager should call 'onFailure' to alert the admin"""
+    def shouldNotifyFailure(self, jobState):
+        notifyFrequency = self.notifyOnFailureEvery()
+        if notifyFrequency == JobFailureNotificationFrequency.EVERYTIME:
+            return True
+        elif notifyFrequency == JobFailureNotificationFrequency.EVERYFIVEMINUTES:
+            now = time.time()
+            lastNotify = jobState.LastNotifyTime
+            if now - lastNotify > datetime.timedelta(minutes=4, seconds=30):
+                return True
+            return False
+        elif notifyFrequency == JobFailureNotificationFrequency.EVERYTENMINUTES:
+            now = time.time()
+            lastNotify = jobState.LastNotifyTime
+            if now - lastNotify > datetime.timedelta(minutes=9, seconds=15):
+                return True
+            return False
+        elif notifyFrequency == JobFailureNotificationFrequency.EVERYHOUR:
+            now = time.time()
+            lastNotify = jobState.LastNotifyTime
+            if now - lastNotify > datetime.timedelta(minutes=59, seconds=0):
+                return True
+            return False
+        elif notifyFrequency == JobFailureNotificationFrequency.ONSTATECHANGE:
+            #Only notify if the last JobState was a Success
+            return jobState.CurrentStateSuccess
+        return True
+
+    """Helper method to send email"""
     def sendEmail(self, subject, body, to=""):
         return sendEmail(self.config, subject, body, to)
 
+
+    """OVERRIDE ME
+        Returns a JobFrequency indicating how often the job should be run."""
     def executeEvery(self):
         pass
+
+    """OVERRIDE ME
+        Returns a JobFailureNotificationFrequency indicating how often a failure 
+        notification email should be sent"""
+    def notifyOnFailureEvery(self):
+        pass
+
+    """OVERRIDE ME
+       Executes the job's actions, and returns true to indicate the job succeeded."""
     def execute(self):
         pass
+
+    """OVERRIDE ME
+       Notify the admin the job failed. Returns True if the email could be 
+       successfully sent.
+       Example: return self.sendEmail(self.subject, self.body, self.notificationAddress)"""
+    def onFailure(self):
+        pass
+
+    """OVERRIDE ME
+       Notify the admin the job succeeded (when it was previously failing). Only used for
+       JobFailureNotificationFrequency.ONSTATECHANGE
+
+       Returns True if the email could be successfully sent.
+       Example: return self.sendEmail(self.subject, self.body, self.notificationAddress)"""
+    def onStateChangeSuccess(self):
+        log.warn(self.getName() + " did not override onStateChangeSuccess")
+        return True
 
 def sendEmail(config, subject, body, to=""):
     FROM = config.get('email', 'user')

@@ -1,6 +1,7 @@
 [general]
 servername=uniqueservername
 alertcontact=youremail@example.com
+statefile=jobrunhistory.db
 
 [email]
 user=agmailaccountyoucreate@gmail.com

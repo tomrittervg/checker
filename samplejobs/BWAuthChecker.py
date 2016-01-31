@@ -13,6 +13,8 @@ import JobBase
 class BWAuthChecker(JobBase.JobBase):
     def executeEvery(self):
         return JobBase.JobFrequency.HOUR
+    def notifyOnFailureEvery(self):
+        return JobBase.JobFailureNotificationFrequency.EVERYTIME
     def execute(self):
         body = ""
         url = "https://example.com/bwauth/bwscan.V3BandwidthsFile"
@@ -34,6 +36,9 @@ class BWAuthChecker(JobBase.JobBase):
         if body:
             logging.warn("tor bwauth is broken?")
             logging.warn(body)
-            return self.sendEmail("tor bwauth is broken?", body)
+            self.logdetails = body
+            return False
         else:
             return True
+    def onFailure(self):
+        return self.sendEmail("tor bwauth is broken?", self.logdetails)

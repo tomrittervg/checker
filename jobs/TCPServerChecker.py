@@ -9,20 +9,24 @@ import JobSpawner
 
 class TCPServerChecker(JobSpawner.JobSpawner):
     servers = [ 
-                #("example.com", 53, "example.com:tcpdns", JobBase.JobFrequency.MINUTE),
+                #("example.com", 53, "example.com:tcpdns", JobBase.JobFrequency.MINUTE, JobBase.JobFailureNotificationFrequency.EVERYTIME)
               ]
 
     class ServerChecker(JobBase.JobBase):
-        def __init__(self, ip, port, friendlyName, frequency):
+        def __init__(self, config, ip, port, friendlyName, frequency, failureNotificationFrequency):
+            self.config = config
             self.ip = ip
             self.port = port
             self.friendlyName = friendlyName + "(" + self.ip + ":" + str(self.port) + ")"
             self.frequency = frequency
+            self.failureNotificationFrequency = failureNotificationFrequency
 
         def getName(self):
             return str(self.__class__) + " for " + self.friendlyName
         def executeEvery(self):
             return self.frequency
+        def notifyOnFailureEvery(self):
+            return self.failureNotificationFrequency
         def execute(self):
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,12 +34,16 @@ class TCPServerChecker(JobSpawner.JobSpawner):
                 s.close()
                 return True
             except:
-                msg = "Could not hit server " + self.friendlyName
-                logging.warn(msg)
-                return self.sendEmail(msg, "")
+                self.failuremsg = "Could not hit server " + self.friendlyName
+                logging.warn(self.failuremsg)
+                return False
+        def onFailure(self):
+            return self.sendEmail(self.failuremsg, "")
+        def onStateChangeSuccess(self):
+            return self.sendEmail("Successfully hit " + self.friendlyName, "")
 
-    def get_sub_jobs(self):
+    def get_sub_jobs(self, config):
         for s in self.servers:
-            yield self.ServerChecker(s[0], s[1], s[2], s[3])
+            yield self.ServerChecker(config, s[0], s[1], s[2], s[3], s[4])
 
             

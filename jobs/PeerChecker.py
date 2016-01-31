@@ -9,46 +9,57 @@ import requests
 
 import JobBase
 
-class PeerChecker(JobBase.JobBase):
-    def executeEvery(self):
-        return JobBase.JobFrequency.HOUR
-    def execute(self):
-        testSuccess = True
-        peers = self.config.items('peers')
-        for p in peers:
-            peer = p[1].split(',')
+class PeerChecker(JobSpawner.JobSpawner):
+    class IndividualPeerChecker(JobBase.JobBase):
+        def __init__(self, config, checkurl, notificationAddress):
+            self.checkurl = checkurl
+            self.notificationAddress = notificationAddress
+
+        def executeEvery(self):
+            return JobBase.JobFrequency.HOUR
+        def notifyOnFailureEvery(self):
+            return JobBase.JobFailureNotificationFrequency.EVERYTIME
+        def execute(self):
             peerOK = False
 
-            subject = ""
-            body = ""
+            self.subject = ""
+            self.body = ""
 
             try:
-                response = requests.get(peer[0])
+                response = requests.get(self.checkurl)
                 if response.status_code != 200:
                     peerOK = False
-                    subject = peer[0] + " returned a non-standard status code."
-                    body = str(response.status_code) + "\n" + response.content
+                    self.subject = self.checkurl + " returned a non-standard status code."
+                    self.body = str(response.status_code) + "\n" + response.content
                 else:
                     if "True" in response.content:
                         peerOK = True
                     elif "MailProblem" in response.content:
                         peerOK = False
-                        subject = peer[0] + " reports it cannot send email."
-                        body = str(response.status_code) + "\n" + response.content
+                        self.subject = self.checkurl + " reports it cannot send email."
+                        self.body = str(response.status_code) + "\n" + response.content
                     elif "JobProblem" in response.content:
                         peerOK = False
-                        subject = peer[0] + " reports its jobs are not running."
-                        body = str(response.status_code) + "\n" + response.content
+                        self.subject = self.checkurl + " reports its jobs are not running."
+                        self.body = str(response.status_code) + "\n" + response.content
                     else:
                         peerOK = False
-                        subject = peer[0] + " had an unexpected response."
-                        body = str(response.status_code) + "\n" + response.content
+                        self.subject = self.checkurl + " had an unexpected response."
+                        self.body = str(response.status_code) + "\n" + response.content
             except Exception as e:
                 peerOK = False
-                subject = peer[0] + " is not responding."
-                body = str(e)
+                self.subject = self.checkurl + " is not responding."
+                self.body = str(e)
+            return peerOK
             
-            if not peerOK:
-                if not self.sendEmail(subject, body, peer[1]):
-                    testSuccess = False
-        return testSuccess
+            return peerOK:
+        def onFailure(self):
+            return self.sendEmail(self.subject, self.body, self.notificationAddress)
+        def onStateChangeSuccess(self):
+            return self.sendEmail("Successfully hit " + self.checkurl, "", self.notificationAddress)
+
+    def get_sub_jobs(self, config):
+        peers = config.items('peers')
+        for p in peers:
+            (address, email) = p[1].split(',')
+            yield self.IndividualPeerChecker(config, address, email)
