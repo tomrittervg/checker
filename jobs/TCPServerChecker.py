@@ -14,6 +14,7 @@ class TCPServerChecker(JobSpawner.JobSpawner):
 
     class ServerChecker(JobBase.JobBase):
         def __init__(self, config, ip, port, friendlyName, frequency, failureNotificationFrequency):
+            JobBase.JobBase.__init__(self, config, ip, port, friendlyName, frequency, failureNotificationFrequency)
             self.config = config
             self.ip = ip
             self.port = port

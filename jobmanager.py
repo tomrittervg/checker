@@ -50,7 +50,7 @@ class JobManager:
                                  ", making up a dummy state for it.")
                     lastRunStatus = self.state[thisJob.getStateName()] = JobState.Empty(thisJob.getStateName())
 
-                logging.info("Executing " + thisJob.getName())
+                logging.info("Executing " + thisJob.getName() + "(" + thisJob.getStateName() + ")")
                 if not thisJob.execute():
                     #Unsuccessful run
                     logging.info("Execution of " + thisJob.getName() + " failed")

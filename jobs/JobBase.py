@@ -2,6 +2,7 @@
 
 import time
 import random
+import hashlib
 import logging
 import datetime
 
@@ -21,8 +22,9 @@ class JobFailureNotificationFrequency:
     ONSTATECHANGE = "state_change"
 
 class JobBase:
-    def __init__(self, config):
+    def __init__(self, config, *args):
         self.config = config
+        self.stateName = hashlib.sha1(self.getName() + "|" + "|".join(args)).hexdigest()
 
     """ Return a friendly name to identify this Job"""
     def getName(self):
@@ -32,7 +34,7 @@ class JobBase:
        Needed to keep track of the job's run history. 
        Takes into account the contructor arguments to uniquely identify JobSpawner-jobs"""
     def getStateName(self):
-        return self.getName()
+        return self.stateName
 
     """Returns True if the job should execute this cron-run"""
     def shouldExecute(self, cronmode):

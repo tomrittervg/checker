@@ -48,7 +48,9 @@ JobBase is the base for a job, and should be used when you have a single, custom
 
 ### Inherit JobSpawner
 
-JobSpawner should be used when you want to run the same logic for multiple servers. Look at HTTPServerChecker and TCPServerChecker for examples of how one can use it.
+JobSpawner should be used when you want to run the same logic for multiple servers. Look at HTTPServerChecker and TCPServerChecker for examples of how one can use it. 
+
+Be sure to call JobBase.__init__(self, config, ...) in the inner JobBase's init (with all of your arguements); otherwise the job state file will get messed up and be unable to distinguish between your individual spawned jobs.
 
 # Install
 
