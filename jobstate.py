@@ -5,8 +5,9 @@ import logging
 import datetime
 
 class JobState:
-	def __init__(self, name):
+	def __init__(self, name, friendlyname):
 		self.name = name
+		self.friendlyname = friendlyname
 		self.CurrentStateSuccess = True
 		self.FirstFailureTime = 0
 		self.LastNotifyTime = 0
@@ -40,12 +41,13 @@ class JobState:
 		ret  = self.name + "|" 
 		ret += "Succeeding" if self.CurrentStateSuccess else "Failing"
 		ret += "|" + str(self.FirstFailureTime)
-		ret += "|" + str(self.LastNotifyTime) + "\n"
+		ret += "|" + str(self.LastNotifyTime) + "|"
+		ret += self.friendlyname + "\n"
 		return ret
 
 	@staticmethod
 	def Parse(line):
-		s = JobState("")
+		s = JobState("", "")
 
 		line = line.strip()
 		parts = line.split("|")
@@ -54,10 +56,11 @@ class JobState:
 		s.CurrentStateSuccess = True if parts[1] == "Succeeding" else False
 		s.FirstFailureTime = float(parts[2])
 		s.LastNotifyTime = float(parts[3])
+		s.friendlyname = parts[4] 
 
 		return s
 
 	@staticmethod
-	def Empty(name):
-		s = JobState(name)
+	def Empty(name, friendlyname):
+		s = JobState(name, friendlyname)
 		return s

@@ -17,6 +17,8 @@ class PeerChecker(JobSpawner.JobSpawner):
             self.notificationAddress = notificationAddress
             super(PeerChecker.IndividualPeerChecker, self).__init__(config, checkurl, notificationAddress)
 
+        def getName(self):
+            return str(self.__class__) + " for " + self.checkurl
         def executeEvery(self):
             return JobBase.JobFrequency.HOUR
         def notifyOnFailureEvery(self):

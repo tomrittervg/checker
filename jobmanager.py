@@ -49,7 +49,7 @@ class JobManager:
                 except:
                     logging.warn("No state was found for " + thisJob.getStateName() + \
                                  ", making up a dummy state for it.")
-                    lastRunStatus = self.state[thisJob.getStateName()] = JobState.Empty(thisJob.getStateName())
+                    lastRunStatus = self.state[thisJob.getStateName()] = JobState.Empty(thisJob.getStateName(), thisJob.getName())
 
                 if not thisJob.execute():
                     #Unsuccessful run
