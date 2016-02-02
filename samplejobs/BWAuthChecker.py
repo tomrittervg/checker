@@ -26,8 +26,8 @@ class BWAuthChecker(JobBase.JobBase):
             else:
                 then = datetime.datetime.utcfromtimestamp(int(lines[0]))
                 now = datetime.datetime.utcfromtimestamp(time.time())
-                if now - then > datetime.timedelta(hours=2):
-                    body = "The bandwidth file is more than 2 hours old.\n"
+                if now - then > datetime.timedelta(hours=3):
+                    body = "The bandwidth file is more than 3 hours old.\n"
                     body += str((now-then).seconds / 60) + " minutes old.\n"
                 elif len(lines) < 8800:
                     body = "The bandwidth file has a low number of relays: " + str(len(lines)) + "\n"
