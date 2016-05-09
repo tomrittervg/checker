@@ -51,19 +51,19 @@ class JobBase(object):
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYFIVEMINUTES:
             now = time.time()
             lastNotify = jobState.LastNotifyTime
-            if now - lastNotify > datetime.timedelta(minutes=4, seconds=30):
+            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(minutes=4, seconds=30):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYTENMINUTES:
             now = time.time()
             lastNotify = jobState.LastNotifyTime
-            if now - lastNotify > datetime.timedelta(minutes=9, seconds=15):
+            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(minutes=9, seconds=15):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYHOUR:
             now = time.time()
             lastNotify = jobState.LastNotifyTime
-            if now - lastNotify > datetime.timedelta(minutes=59, seconds=0):
+            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(minutes=59, seconds=0):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.ONSTATECHANGE:
