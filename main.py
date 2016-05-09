@@ -67,7 +67,10 @@ if __name__ == "__main__":
             sys.exit(-1)
         else:
             log.info("Running cron at frequency " + args.crontime)
-            if jobManager.execute_jobs(args.crontime):
-                jobManager.mark_jobs_ran()
-            else:
+            try:
+                if jobManager.execute_jobs(args.crontime):
+                    jobManager.mark_jobs_ran()
+                else:
+                    jobManager.mark_jobs_ran_with_error()
+            except:
                 jobManager.mark_jobs_ran_with_error()
