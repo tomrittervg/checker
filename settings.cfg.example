@@ -4,6 +4,7 @@ alertcontact=youremail@example.com
 statefile=jobrunhistory.db
 
 [email]
+nomail=False
 user=agmailaccountyoucreate@gmail.com
 pass=yourpassword
 smtpserver=smtp.gmail.com

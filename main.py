@@ -24,6 +24,7 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--mode', choices=['daemon', 'cron'], required=True, help='The mode the application will run it.')
     parser.add_argument('-c', '--crontime', choices=['minute', 'hour', 'day', 'day_noon'], help='When in cron mode, the increment of cron.')
     parser.add_argument('-v', action="store_true", help="Print verbose debugging information to stderr")
+    parser.add_argument('--nomail', action="store_true", help="Do everything except sending email")
 
     args = parser.parse_args()
 
@@ -32,11 +33,15 @@ if __name__ == "__main__":
     if args.v:
         print "[Pre-Logging] Reading config from", configfile
     config.read(configfile)
-    if not config.get('email', 'user') or \
+    if args.nomail:
+        config.set('email', 'nomail', "True")
+
+    if not config.getboolean('email', 'nomail') and (\
+        not config.get('email', 'user') or \
         not config.get('email', 'pass') or \
         not config.get('email', 'smtpserver') or \
         not config.get('email', 'smtpport') or \
-        not config.get('email', 'imapserver'):
+        not config.get('email', 'imapserver')):
         print "Sending email address is not configured"
         sys.exit(1)
     if not config.get('general', 'servername') or \

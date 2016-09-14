@@ -15,6 +15,10 @@ class EmailChecker(JobBase.JobBase):
     def notifyOnFailureEvery(self):
         return JobBase.JobFailureNotificationFrequency.EVERYTIME
     def execute(self):
+        if self.config.getboolean('email', 'nomail'):
+            logging.debug("Pretending the EmailChecker job succeeded.")
+            return True
+
         USER = self.config.get('email', 'user')
         PASS = self.config.get('email', 'pass')
 

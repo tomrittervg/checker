@@ -30,6 +30,7 @@ class JobManager:
             f.close()
 
     def _save_state(self):
+        logging.info("Saving State...")
         f = open(self.statefile, "w")
         for i in self.state:
             f.write(self.state[i].serialize())

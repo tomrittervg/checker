@@ -110,6 +110,10 @@ class JobBase(object):
         return True
 
 def sendEmail(config, subject, body, to=""):
+    if config.getboolean('email', 'nomail'):
+        logging.info("Not sending email with subject '" + subject + '" but pretending we did.')
+        return True
+
     FROM = config.get('email', 'user')
     PASS = config.get('email', 'pass')
     if not to:
