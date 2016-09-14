@@ -74,7 +74,4 @@ First edit the ... to your path, then enter the following into your cron
     0 0 * * * .../checker/main.py -m cron -c day    >/dev/null 2>&1
     0 12 * * * .../checker/main.py -m cron -c day_noon >/dev/null 2>&1
   
-# TODO
 
-* Implement throttling logic so if a job fails, you don't get an email every single time it fails. Instead get one email when it starts failing and then one email when it's back up. (And let this be customizable.)
-* Make JobBase.execute more intuitive for job authors. Remove the "return if the mail sent successfully" requirement.
