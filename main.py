@@ -77,5 +77,6 @@ if __name__ == "__main__":
                     jobManager.mark_jobs_ran()
                 else:
                     jobManager.mark_jobs_ran_with_error()
-            except:
+            except Exception as e:
+                logging.critical("Caught an exception trying to execute jobs:" + str(e))
                 jobManager.mark_jobs_ran_with_error()
