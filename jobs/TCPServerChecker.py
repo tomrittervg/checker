@@ -31,7 +31,7 @@ class TCPServerChecker(JobSpawner.JobSpawner):
         def execute(self):
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(5)
+                s.settimeout(10)
                 s.connect((self.ip, self.port))
                 s.close()
                 return True

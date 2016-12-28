@@ -28,12 +28,15 @@ class HTTPServerChecker(JobSpawner.JobSpawner):
             return self.failureNotificationFrequency
         def execute(self):
             try:
-                requests.get(self.url)
-                return True
+                i = requests.get(self.url)
+                if i.status_code != 200:
+                    self.failuremsg = "Error hitting server " + self.url + " (Code: " + str(i.status_code) + ")"
+                else:
+                    return True
             except:
                 self.failuremsg = "Could not hit server " + self.url
-                logging.warn(self.failuremsg)
-                return False
+            logging.warn(self.failuremsg)
+            return False
         def onFailure(self):
             return self.sendEmail(self.failuremsg, "")
         def onStateChangeSuccess(self):
