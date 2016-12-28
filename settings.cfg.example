@@ -1,7 +1,7 @@
 [general]
 servername=uniqueservername
 alertcontact=youremail@example.com
-statefile=jobrunhistory.db
+statefile=/fully/qualified/path/jobrunhistory.db
 
 [email]
 nomail=False
