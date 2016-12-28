@@ -2,7 +2,7 @@
 
 import time
 import random
-import hashlib
+import base64
 import logging
 import datetime
 
@@ -29,7 +29,7 @@ class JobFailureCountMinimumBeforeNotification:
 class JobBase(object):
     def __init__(self, config, *args):
         self.config = config
-        self.stateName = hashlib.sha1(self.getName() + "|" + "|".join([str(a) for a in args])).hexdigest()
+        self.stateName = base64.b64encode(self.getName() + "|" + "|".join([str(a) for a in args]))
 
     """ Return a friendly name to identify this Job"""
     def getName(self):
