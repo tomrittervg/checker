@@ -16,12 +16,13 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
               ]
 
     class CertChecker(JobBase.JobBase):
-        def __init__(self, config, url, frequency, failureNotificationFrequency):
+        def __init__(self, config, url, frequency, failureNotificationFrequency, failuresBeforeNotification):
             self.config = config
             self.url = url
             self.frequency = frequency
             self.failureNotificationFrequency = failureNotificationFrequency
-            super(TLSCertExpiration.CertChecker, self).__init__(config, url, frequency, failureNotificationFrequency)
+            self.failuresBeforeNotification = failuresBeforeNotification
+            super(TLSCertExpiration.CertChecker, self).__init__(config, url, frequency, failureNotificationFrequency, failuresBeforeNotification)
 
         def getName(self):
             return str(self.__class__) + " for " + self.url
@@ -29,6 +30,8 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
             return self.frequency
         def notifyOnFailureEvery(self):
             return self.failureNotificationFrequency
+        def numberFailuresBeforeNotification(self):
+            return self.failuresBeforeNotification
         def execute(self):
             try:
                 context = ssl._create_unverified_context()
@@ -54,5 +57,5 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
 
     def get_sub_jobs(self, config):
         for s in self.servers:
-            yield self.CertChecker(config, s[0], s[1], s[2])
+            yield self.CertChecker(config, s[0], s[1], s[2], s[3])
 

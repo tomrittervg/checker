@@ -14,6 +14,8 @@ class EmailChecker(JobBase.JobBase):
         return JobBase.JobFrequency.HOUR
     def notifyOnFailureEvery(self):
         return JobBase.JobFailureNotificationFrequency.EVERYTIME
+    def numberFailuresBeforeNotification(self):
+        return JobBase.JobFailureCountMinimumBeforeNotification.ONE
     def execute(self):
         if self.config.getboolean('email', 'nomail'):
             logging.debug("Pretending the EmailChecker job succeeded.")

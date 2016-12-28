@@ -35,6 +35,8 @@ JobBase is the base for a job, and should be used when you have a single, custom
  * This should return a JobFrequency constant indicating how often you want the job to run
 * notifyOnFailureEvery
  * This should return a JobFailureNotificationFrequency constant indicating how often you want to be notified about a (continually) failing job
+* numberFailuresBeforeNotification
+ * This should return a JobFailureCountMinimumBeforeNotification constant indicating how many failures should occur in a row before notifying on failure
 * execute
  * This does the work. It returns True if the job succeeded or False if it didn't
 * onFailure

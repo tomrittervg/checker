@@ -23,6 +23,8 @@ class PeerChecker(JobSpawner.JobSpawner):
             return JobBase.JobFrequency.HOUR
         def notifyOnFailureEvery(self):
             return JobBase.JobFailureNotificationFrequency.EVERYTIME
+        def numberFailuresBeforeNotification(self):
+            return JobBase.JobFailureCountMinimumBeforeNotification.ONE
         def execute(self):
             peerOK = False
 

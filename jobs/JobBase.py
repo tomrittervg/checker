@@ -22,6 +22,10 @@ class JobFailureNotificationFrequency:
     EVERYDAY = "day"
     ONSTATECHANGE = "state_change"
 
+class JobFailureCountMinimumBeforeNotification:
+    ONE = "one"
+    TWO = "two"
+
 class JobBase(object):
     def __init__(self, config, *args):
         self.config = config
@@ -47,6 +51,14 @@ class JobBase(object):
     """Returns True if the jobmanager should call 'onFailure' to alert the admin"""
     def shouldNotifyFailure(self, jobState):
         notifyFrequency = self.notifyOnFailureEvery()
+        minFailureCount = self.numberFailuresBeforeNotification()
+
+        if minFailureCount == JobFailureCountMinimumBeforeNotification.ONE:
+            pass
+        elif minFailureCount == JobFailureCountMinimumBeforeNotification.TWO:
+            if jobState.CurrentStateSuccess:
+                return False
+
         if notifyFrequency == JobFailureNotificationFrequency.EVERYTIME:
             return True
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYFIVEMINUTES:
@@ -92,6 +104,12 @@ class JobBase(object):
         Returns a JobFailureNotificationFrequency indicating how often a failure 
         notification email should be sent"""
     def notifyOnFailureEvery(self):
+        pass
+
+    """OVERRIDE ME
+        Returns a JobFailureCountMinimumBeforeNotification indicating how many 
+        failures should occur before a notification email should be sent"""
+    def numberFailuresBeforeNotification(self):
         pass
 
     """OVERRIDE ME
