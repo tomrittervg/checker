@@ -17,10 +17,11 @@ class MetricsChecker(JobBase.JobBase):
     def execute(self):
         body = ""
         ys = datetime.date.today() - datetime.timedelta(hours=24)
-        url = "https://example.com/out/relay-descriptors/consensus/" + str(ys.year) + "/" + str(ys.month).zfill(2) + "/" + str(ys.day).zfill(2) + "/"
+        url = "https://collector.ritter.vg/recent/relay-descriptors/consensuses/"
         try:
             r = requests.get(url)
-            if "12-00-00-consensus" in r.content:
+            this_consensus = str(ys.year) + "-" + str(ys.month).zfill(2) + "-" + str(ys.day).zfill(2) + "-12-00-00-consensus" 
+            if this_consensus in r.content:
                 pass
             else:
                 body = "Could not find 12-00-00-consensus in the body:\n\n" + r.content
@@ -35,3 +36,4 @@ class MetricsChecker(JobBase.JobBase):
             return True
     def onFailure(self):
         return self.sendEmail("tor metrics is broken?", self.logdetails)
+
