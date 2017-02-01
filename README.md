@@ -52,7 +52,7 @@ JobBase is the base for a job, and should be used when you have a single, custom
 
 JobSpawner should be used when you want to run the same logic for multiple servers. Look at HTTPServerChecker and TCPServerChecker for examples of how one can use it. 
 
-Be sure to call JobBase.__init__(self, config, ...) in the inner JobBase's init (with all of your arguements); otherwise the job state file will get messed up and be unable to distinguish between your individual spawned jobs.
+Be sure to call JobBase.__init__(self, config, ...) in the inner JobBase's init. It should be passed all the arguments that distinguish one job from another - for example for the TCP checker this is the IP and port. If you omit this step, the job state file will get messed up and be unable to distinguish between your individual spawned jobs. (It does not need 'extra' configuration arguments that do not distinguish jobs such as JobFrequency. If you pass them anyway, you will get extra lines in the state file when/if you change those arguments which is not bad, just a little messy.) 
 
 # Install
 

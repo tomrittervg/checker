@@ -21,7 +21,7 @@ class TCPServerChecker(JobSpawner.JobSpawner):
             self.frequency = frequency
             self.failureNotificationFrequency = failureNotificationFrequency
             self.failuresBeforeNotification = failuresBeforeNotification
-            super(TCPServerChecker.ServerChecker, self).__init__(config, ip, port, friendlyName, frequency, failureNotificationFrequency, failuresBeforeNotification)
+            super(TCPServerChecker.ServerChecker, self).__init__(config, ip, port)
 
         def getName(self):
             return str(self.__class__) + " for " + self.friendlyName

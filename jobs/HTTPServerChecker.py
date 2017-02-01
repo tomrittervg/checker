@@ -19,7 +19,7 @@ class HTTPServerChecker(JobSpawner.JobSpawner):
             self.frequency = frequency
             self.failureNotificationFrequency = failureNotificationFrequency
             self.failuresBeforeNotification = failuresBeforeNotification
-            super(HTTPServerChecker.ServerChecker, self).__init__(config, url, frequency, failureNotificationFrequency, failuresBeforeNotification)
+            super(HTTPServerChecker.ServerChecker, self).__init__(config, url)
 
         def getName(self):
             return str(self.__class__) + " for " + self.url
