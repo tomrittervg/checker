@@ -11,14 +11,17 @@ class JobState:
 		self.CurrentStateSuccess = True
 		self.FirstFailureTime = 0
 		self.LastNotifyTime = 0
+		self.NumFailures = 0
 
 	def markFailedAndNotify(self):
 		if self.CurrentStateSuccess:
 			self.CurrentStateSuccess = False
 			self.FirstFailureTime = time.time()
 			self.LastNotifyTime = self.FirstFailureTime
+			self.NumFailures = 1
 		else:
 			self.LastNotifyTime = time.time()
+			self.NumFailures += 1
 
 	def markFailedNoNotify(self):
 		if self.CurrentStateSuccess:
@@ -26,8 +29,9 @@ class JobState:
 			self.CurrentStateSuccess = False
 			self.FirstFailureTime = time.time()
 			self.LastNotifyTime = 0
+			self.NumFailures = 1
 		else:
-			pass
+			self.NumFailures += 1
 
 	def markSuccessful(self):
 		if self.CurrentStateSuccess:
@@ -36,13 +40,15 @@ class JobState:
 			self.CurrentStateSuccess = True
 			self.FirstFailureTime = 0
 			self.LastNotifyTime = 0
+			self.NumFailures = 0
 
 	def serialize(self):
 		ret  = self.name + "|" 
 		ret += "Succeeding" if self.CurrentStateSuccess else "Failing"
 		ret += "|" + str(self.FirstFailureTime)
 		ret += "|" + str(self.LastNotifyTime) + "|"
-		ret += self.friendlyname + "\n"
+		ret += self.friendlyname.replace("|", "#") #Why yes, this is ugly!
+		ret += "|" + str(self.NumFailures) + "\n"
 		return ret
 
 	@staticmethod
@@ -56,7 +62,10 @@ class JobState:
 		s.CurrentStateSuccess = True if parts[1] == "Succeeding" else False
 		s.FirstFailureTime = float(parts[2])
 		s.LastNotifyTime = float(parts[3])
-		s.friendlyname = parts[4] 
+		s.friendlyname = parts[4].replace("#", "|")
+
+		if len(parts) > 5:
+			s.NumFailures = int(parts[5])
 
 		return s
 
