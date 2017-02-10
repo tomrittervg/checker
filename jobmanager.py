@@ -61,6 +61,7 @@ class JobManager:
                         if not thisJob.onFailure():
                             emailWorks = False
                     else:
+                        logging.info("Skipping notification of failure for " + thisJob.getName())
                         lastRunStatus.markFailedNoNotify()
                 else:
                     #Successful Run

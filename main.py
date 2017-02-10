@@ -23,15 +23,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Check your stuff.")
     parser.add_argument('-m', '--mode', choices=['daemon', 'cron'], required=True, help='The mode the application will run it.')
     parser.add_argument('-c', '--crontime', choices=['minute', 'hour', 'day', 'day_noon'], help='When in cron mode, the increment of cron.')
-    parser.add_argument('-v', action="store_true", help="Print verbose debugging information to stderr")
+    parser.add_argument('-v', action="store_true", help="Print verbose debugging information to the logfile")
+    parser.add_argument('-d', action="store_true", help="Print verbose debugging information to stderr")
     parser.add_argument('--nomail', action="store_true", help="Do everything except sending email")
 
     args = parser.parse_args()
 
     config = ConfigParser.ConfigParser()
     configfile = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.cfg')
-    if args.v:
-        print "[Pre-Logging] Reading config from", configfile
     config.read(configfile)
     if args.nomail:
         config.set('email', 'nomail', "True")
@@ -53,10 +52,18 @@ if __name__ == "__main__":
 
     requests_log = logging.getLogger("requests.packages.urllib3")
     requests_log.setLevel(logging.CRITICAL)
-    logging.basicConfig(format="%(asctime)s:%(levelname)s:  %(message)s")
+    log_formatter = logging.Formatter(fmt="%(asctime)s:%(levelname)s:  %(message)s")
     log = logging.getLogger()
     if args.v:
         log.setLevel(logging.DEBUG)
+        log_file_handler = logging.FileHandler(config.get('general', 'logfile'))
+        log_file_handler.setFormatter(log_formatter)
+        log.addHandler(log_file_handler)
+    if args.d:
+        log.setLevel(logging.DEBUG)
+        log_stderr_handler = logging.StreamHandler()
+        log_stderr_handler.setFormatter(log_formatter)
+        log.addHandler(log_stderr_handler)
 
     if args.mode == 'daemon':
         log.info("Starting up daemon")

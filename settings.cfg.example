@@ -1,6 +1,7 @@
 [general]
 servername=uniqueservername
 alertcontact=youremail@example.com
+logfile=/fully/qualified/path/logfile.log
 statefile=/fully/qualified/path/jobrunhistory.db
 
 [email]
