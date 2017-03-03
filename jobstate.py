@@ -14,6 +14,8 @@ class JobState:
 		self.NumFailures = 0
 
 	def markFailedAndNotify(self):
+		# Confusing: In this function 'self' represents the lastRunStatus
+		# and we know the current run has failed
 		if self.CurrentStateSuccess:
 			self.CurrentStateSuccess = False
 			self.FirstFailureTime = time.time()
@@ -24,8 +26,9 @@ class JobState:
 			self.NumFailures += 1
 
 	def markFailedNoNotify(self):
+		# Confusing: In this function 'self' represents the lastRunStatus
+		# and we know the current run has failed
 		if self.CurrentStateSuccess:
-			logging.warn("Somehow we called markFailedNoNotify, on a success condition, without notifying the user")
 			self.CurrentStateSuccess = False
 			self.FirstFailureTime = time.time()
 			self.LastNotifyTime = 0
@@ -34,6 +37,8 @@ class JobState:
 			self.NumFailures += 1
 
 	def markSuccessful(self):
+		# Confusing: In this function 'self' represents the lastRunStatus
+		# and we know the current run has succeeded
 		if self.CurrentStateSuccess:
 			pass
 		else:

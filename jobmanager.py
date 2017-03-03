@@ -69,6 +69,7 @@ class JobManager:
                     if lastRunStatus.CurrentStateSuccess == False and \
                         thisJob.notifyOnFailureEvery() == JobBase.JobFailureNotificationFrequency.ONSTATECHANGE and \
                         lastRunStatus.NumFailures >= thisJob.numberFailuresBeforeNotification():
+                        logging.info("Notifying of success (state change). " + str(lastRunStatus.NumFailures) + " >= " + str(thisJob.numberFailuresBeforeNotification()))
                         if not thisJob.onStateChangeSuccess():
                             emailWorks = False
                     lastRunStatus.markSuccessful()

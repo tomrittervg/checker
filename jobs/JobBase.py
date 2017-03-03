@@ -86,8 +86,12 @@ class JobBase(object):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.ONSTATECHANGE:
-            #Only notify if the last JobState was a Success
-            return jobState.CurrentStateSuccess
+            if minFailureCount == 1:
+                # If we notify on the first failure, only notify if the last JobState was a Success
+                return jobState.CurrentStateSuccess
+            else:
+                # If we notify after N failures, only notify if this is exactly the nth failure
+                return 1 + currentFailureCount == minFailureCount
         return True
 
     """Helper method to send email"""
