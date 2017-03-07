@@ -1,3 +1,4 @@
 *.pyc
 settings.cfg
 jobrunhistory.db
+logfile.log
