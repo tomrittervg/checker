@@ -74,6 +74,7 @@ class BWAuthChecker(JobBase.JobBase):
                     elif l.strip():
                         last_measured = re.match("NOTICE\[[^\s]+ ([0-9a-zA-Z: ]+)\]", l).groups(0)[0]
                         last_measured = datetime.datetime.strptime(last_measured, "%b %d %H:%M:%S %Y")
+                measurement_times[this_scanner] = last_measured
 
                 for t in measurement_times:
                     if measurement_times[t] + datetime.timedelta(days=6) < datetime.datetime.now():
