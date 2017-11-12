@@ -71,8 +71,8 @@ Checker relies on the system cron to run at every interval. You need one cron jo
 
 First edit the ... to your path, then enter the following into your cron
 
-    * * * * * .../checker/main.py -m cron -c minute >/dev/null 2>&1
-    0 * * * * .../checker/main.py -m cron -c hour   >/dev/null 2>&1
+    1-59 * * * * .../checker/main.py -m cron -c minute >/dev/null 2>&1
+    0 1-11,13-23 * * * .../checker/main.py -m cron -c hour   >/dev/null 2>&1
     0 0 * * * .../checker/main.py -m cron -c day    >/dev/null 2>&1
     0 12 * * * .../checker/main.py -m cron -c day_noon >/dev/null 2>&1
   

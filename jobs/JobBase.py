@@ -44,9 +44,9 @@ class JobBase(object):
         return self.stateName
 
     """Returns True if the job should execute this cron-run"""
-    def shouldExecute(self, cronmode):
+    def shouldExecute(self, cronmodes):
         frequency = self.executeEvery()
-        if cronmode == frequency:
+        if frequency in cronmodes:
             return True
         return False
 

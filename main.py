@@ -18,6 +18,22 @@ from twisted.web import server
 from jobmanager import JobManager
 from statustracker import StatusTracker
 from servers import StatusSite, PingSite
+
+# We only run one command on the hour and day marks, but we need to execute all the jobs in that instance,
+# including our minute jobs and hour jobs
+def convert_crontimes(crontime):
+    ret = ["minute"]
+    if crontime == "minute":
+        pass
+    elif crontime == "hour":
+        ret.append("hour")
+    elif crontime == "day":
+        ret.append("hour")
+        ret.append("day")
+    elif crontime == "day_noon":
+        ret.append("hour")
+        ret.append("day_noon")
+    return ret
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Check your stuff.")
@@ -78,9 +94,9 @@ if __name__ == "__main__":
             parser.print_help()
             sys.exit(-1)
         else:
-            log.info("Running cron at frequency " + args.crontime)
+            log.info("Running cron at frequencies " + str(convert_crontimes(args.crontime)))
             try:
-                if jobManager.execute_jobs(args.crontime):
+                if jobManager.execute_jobs(convert_crontimes(args.crontime)):
                     jobManager.mark_jobs_ran()
                 else:
                     jobManager.mark_jobs_ran_with_error()

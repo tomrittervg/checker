@@ -39,11 +39,11 @@ class JobManager:
     def list_jobs(self):
         return self.jobs
     
-    def execute_jobs(self, cronmode):
+    def execute_jobs(self, cronmodes):
         logging.info("Executing jobs...")
         emailWorks = True
         for thisJob in self.jobs:
-            if thisJob.shouldExecute(cronmode):
+            if thisJob.shouldExecute(cronmodes):
                 logging.info("Executing " + thisJob.getName() + "(" + thisJob.getStateName() + ")")
                 try:
                     lastRunStatus = self.state[thisJob.getStateName()]
