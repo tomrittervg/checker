@@ -31,7 +31,7 @@ class PingSite(resource.Resource):
         self.statusTracker = statusTracker
     def render_POST(self, request):
         self.statusTracker.markJobRan()
-        emailStatus = request.content.read()
+        emailStatus = request.content.read().decode("utf-8")
         emailStatus = "True" in emailStatus
         
         logging.debug("Got notification of jobs ran")

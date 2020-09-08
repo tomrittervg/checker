@@ -26,10 +26,10 @@ class EmailChecker(JobBase.JobBase):
         USER = self.config.get('email', 'user')
         PASS = self.config.get('email', 'pass')
 
-    	logdetails = ""
+        logdetails = ""
         
         #Generate a random subject
-        subj = base64.b64encode(os.urandom(20))
+        subj = base64.b64encode(os.urandom(20)).decode("utf-8")
         logdetails += "Target subject is " + subj + "\n\n"
         
         if not self.sendEmail(subj, "", USER):
@@ -52,7 +52,7 @@ class EmailChecker(JobBase.JobBase):
             logdetails += "Found IMAP item" + str(num) + "\n"
             typ, data = M.fetch(num, '(BODY.PEEK[HEADER.FIELDS (Subject)])')
             logdetails += "IMAP details: " + str(data) + "\n"
-            if subj in data[0][1]:
+            if subj.encode("utf-8") in data[0][1]:
                 logdetails += "Found the target subject!!\n"
                 foundSubject = True
         M.close()

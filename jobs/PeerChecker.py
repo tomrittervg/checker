@@ -34,7 +34,7 @@ class PeerChecker(JobSpawner.JobSpawner):
             self.body = ""
 
             try:
-                response = requests.get(self.checkurl)
+                response = requests.get(self.checkurl, timeout=5)
                 if response.status_code != 200:
                     peerOK = False
                     self.subject = self.checkurl + " returned a non-standard status code."

@@ -43,7 +43,7 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
                 c.request("GET", "/")
                 asn1 = c.sock.getpeercert(True)
                 x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_ASN1, asn1)
-                na = time.mktime(time.strptime(x509.get_notAfter()[:-1], '%Y%m%d%H%M%S'))
+                na = time.mktime(time.strptime(x509.get_notAfter()[:-1].decode("utf-8"), '%Y%m%d%H%M%S'))
                 now = time.time()
                 delta = datetime.timedelta(seconds=(na - now))
                 if delta < datetime.timedelta(days=30):
