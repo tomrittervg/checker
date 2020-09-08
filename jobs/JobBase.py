@@ -33,7 +33,8 @@ class JobFailureCountMinimumBeforeNotification(object):
 class JobBase(object):
     def __init__(self, config, *args):
         self.config = config
-        self.stateName = base64.b64encode(self.getName() + "|" + "|".join([str(a) for a in args]))
+        statename = self.getName() + "|" + "|".join([str(a) for a in args])
+        self.stateName = base64.b64encode(statename.encode("utf-8")).decode("utf-8")
 
     """ Return a friendly name to identify this Job"""
     def getName(self):
