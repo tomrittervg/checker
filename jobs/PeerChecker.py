@@ -4,6 +4,7 @@ from __future__ import absolute_import
 from builtins import str
 import os
 import base64
+import logging
 import datetime 
 
 import imaplib
@@ -40,24 +41,26 @@ class PeerChecker(JobSpawner.JobSpawner):
                     self.subject = self.checkurl + " returned a non-standard status code."
                     self.body = str(response.status_code) + "\n" + response.content
                 else:
-                    if "True" in response.content:
+                    content = response.content.decode("utf-8")
+                    if "True" in content:
                         peerOK = True
-                    elif "MailProblem" in response.content:
+                    elif "MailProblem" in content:
                         peerOK = False
                         self.subject = self.checkurl + " reports it cannot send email."
-                        self.body = str(response.status_code) + "\n" + response.content
-                    elif "JobProblem" in response.content:
+                        self.body = str(response.status_code) + "\n" + content
+                    elif "JobProblem" in content:
                         peerOK = False
                         self.subject = self.checkurl + " reports its jobs are not running."
-                        self.body = str(response.status_code) + "\n" + response.content
+                        self.body = str(response.status_code) + "\n" + content
                     else:
                         peerOK = False
                         self.subject = self.checkurl + " had an unexpected response."
-                        self.body = str(response.status_code) + "\n" + response.content
+                        self.body = str(response.status_code) + "\n" + content
             except Exception as e:
                 peerOK = False
                 self.subject = self.checkurl + " is not responding."
-                self.body = str(e)
+                self.body = repr(e) + "\n"
+                self.body += logging.traceback.format_exc()
             return peerOK
 
         def onFailure(self):
