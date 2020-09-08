@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from builtins import str
+from builtins import object
 import time
 import random
 import base64
@@ -8,13 +10,13 @@ import datetime
 
 import smtplib
 
-class JobFrequency:
+class JobFrequency(object):
     MINUTE = "minute"
     HOUR = "hour"
     DAY = "day"
     DAY_NOON = "day_noon"
 
-class JobFailureNotificationFrequency:
+class JobFailureNotificationFrequency(object):
     EVERYTIME = "every"
     EVERYFIVEMINUTES = "5min"
     EVERYTENMINUTES = "10min"
@@ -22,7 +24,7 @@ class JobFailureNotificationFrequency:
     EVERYDAY = "day"
     ONSTATECHANGE = "state_change"
 
-class JobFailureCountMinimumBeforeNotification:
+class JobFailureCountMinimumBeforeNotification(object):
     ONE = 1
     TWO = 2
     FIVE = 5

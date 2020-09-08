@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from builtins import str
 import os
 import base64
 import datetime 
@@ -7,7 +9,7 @@ import logging
 
 import imaplib
 
-import JobBase
+from . import JobBase
 
 class EmailChecker(JobBase.JobBase):
     def executeEvery(self):

@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import ssl
 import time
 import logging
-import httplib
+import http.client
 import OpenSSL
 import datetime
 
-import JobBase
-import JobSpawner
+from . import JobBase
+from . import JobSpawner
 
 class TLSCertExpiration(JobSpawner.JobSpawner):
     servers = [ 
@@ -35,7 +39,7 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
         def execute(self):
             try:
                 context = ssl._create_unverified_context()
-                c = httplib.HTTPSConnection(self.url, context=context)
+                c = http.client.HTTPSConnection(self.url, context=context)
                 c.request("GET", "/")
                 asn1 = c.sock.getpeercert(True)
                 x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_ASN1, asn1)

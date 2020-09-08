@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from builtins import str
 import logging
 import requests
 
-import JobBase
-import JobSpawner
+from . import JobBase
+from . import JobSpawner
 
 class HTTPServerChecker(JobSpawner.JobSpawner):
     servers = [ 

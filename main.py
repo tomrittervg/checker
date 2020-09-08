@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import os
 import sys
 import json
@@ -8,7 +12,7 @@ import hashlib
 import logging
 import argparse
 import binascii
-import ConfigParser
+import configparser
 
 import requests
 
@@ -45,7 +49,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     configfile = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.cfg')
     config.read(configfile)
     if args.nomail:
@@ -57,11 +61,11 @@ if __name__ == "__main__":
         not config.get('email', 'smtpserver') or \
         not config.get('email', 'smtpport') or \
         not config.get('email', 'imapserver')):
-        print "Sending email address is not configured"
+        print("Sending email address is not configured")
         sys.exit(1)
     if not config.get('general', 'servername') or \
         not config.get('general', 'alertcontact'):
-        print "Default alert contact is not configured"
+        print("Default alert contact is not configured")
         sys.exit(1)
 
 

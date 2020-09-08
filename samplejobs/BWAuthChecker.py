@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 import os
 import re
 import time
@@ -29,7 +32,7 @@ class BWAuthChecker(JobBase.JobBase):
                 now = datetime.datetime.utcfromtimestamp(time.time())
                 if now - then > datetime.timedelta(hours=4):
                     body = "The bandwidth file is more than 4 hours old.\n"
-                    body += str((now-then).seconds / 60) + " minutes old.\n"
+                    body += str(old_div((now-then).seconds, 60)) + " minutes old.\n"
                 elif len(lines) < 8300:
                     body = "The bandwidth file has a low number of relays: " + str(len(lines)) + "\n"
         except Exception as e:

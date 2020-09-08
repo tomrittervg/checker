@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+from builtins import str
 import os
 import socket
 import logging
 
-import JobBase
-import JobSpawner
+from . import JobBase
+from . import JobSpawner
 
 class TCPServerChecker(JobSpawner.JobSpawner):
     servers = [ 

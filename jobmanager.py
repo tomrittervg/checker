@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from builtins import str
+from builtins import object
 import os
 import time
 import logging
@@ -9,7 +11,7 @@ import requests
 from jobs import JobFinder, JobBase
 from jobstate import JobState
 
-class JobManager:
+class JobManager(object):
     def __init__(self, config):
         jobsFinder = JobFinder(config)
         self.jobs = jobsFinder.get_jobs()

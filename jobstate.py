@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
+from builtins import str
+from builtins import object
 import time
 import logging
 import datetime
 
-class JobState:
+class JobState(object):
 	def __init__(self, name, friendlyname):
 		self.name = name
 		self.friendlyname = friendlyname

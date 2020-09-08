@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from builtins import str
+from builtins import object
 import os
 import sys
 import inspect
@@ -11,7 +13,7 @@ import jobs
 import jobs.JobBase
 import jobs.JobSpawner
 
-class JobFinder:
+class JobFinder(object):
     def __init__(self, config):
         """
         Opens the jobs folder and looks at every .py module in that directory.
