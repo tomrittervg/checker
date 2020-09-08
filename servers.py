@@ -22,7 +22,7 @@ class StatusSite(resource.Resource):
             s = "JobProblem"
 
         request.setResponseCode(200)
-        return s
+        return s.encode("utf-8")
 
 class PingSite(resource.Resource):
     isLeaf = True
@@ -42,5 +42,5 @@ class PingSite(resource.Resource):
 
         self.statusTracker.markEmailStatus(emailStatus)
         request.setResponseCode(200)
-        return "OK"
+        return "OK".encode("utf-8")
 
