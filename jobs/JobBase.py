@@ -148,19 +148,21 @@ def sendEmail(config, subject, body, to=""):
         logging.info("Not sending email with subject '" + subject + '" but pretending we did.\n' + body)
         return True
 
-    FROM = config.get('email', 'user')
-    PASS = config.get('email', 'pass')
-    if not to:
-        to = config.get('general', 'alertcontact')
-
-    # Prepare actual message
-    # Avoid gmail threading
-    subject = "[" + config.get('general', 'servername') + "] " + subject + "       " 
-    if config.getboolean('email', 'bustgmailthreading'):
-        subject += str(random.random())
-    message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" \
-        % (FROM, ", ".join(to), subject, body)
     try:
+        FROM = config.get('email', 'user')
+        PASS = config.get('email', 'pass')
+    
+        if not to:
+            to = config.get('general', 'alertcontact')
+
+        # Prepare actual message
+        # Avoid gmail threading
+        subject = "[" + config.get('general', 'servername') + "] " + subject + "       " 
+        if config.getboolean('email', 'bustgmailthreading'):
+            subject += str(random.random())
+        message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" \
+            % (FROM, ", ".join(to), subject, body)
+
         server = smtplib.SMTP(config.get('email', 'smtpserver'), config.get('email', 'smtpport'))
         server.ehlo()
         server.starttls()
@@ -169,5 +171,6 @@ def sendEmail(config, subject, body, to=""):
         server.close()
         return True
     except Exception as e:
-        logging.critical("Caught an exception trying to send an email:" + str(e))
+        logging.critical("Caught an exception trying to send an email:" + repr(e))
+        logging.critical(logging.traceback.format_exc())
         return False

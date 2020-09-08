@@ -78,7 +78,8 @@ class JobFinder(object):
                         module = load_module('jobs.' + full_name, file,
                                                 pathname, description)
                     except Exception as e:
-                        logging.critical('Import Error on ' + module_name + ': ' + str(e))
+                        logging.critical('Import Error on ' + module_name + ': ' + repr(e))
+                        logging.critical(logging.traceback.format_exc())
                         jobs.JobBase.sendEmail(self.config, 'Import Error on ' + module_name, str(e))
                         continue
                     job_modules.append(module)
