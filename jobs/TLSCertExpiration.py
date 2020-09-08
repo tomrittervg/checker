@@ -81,6 +81,7 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
                     "Could not get server certificate " + self.url + "\n" + str(e)
                 )
                 logging.warn(self.failuremsg)
+                logging.warn(logging.traceback.format_exc())
                 return False
 
         def onFailure(self):
