@@ -160,7 +160,7 @@ def sendEmail(config, subject, body, to=""):
         subject = "[" + config.get('general', 'servername') + "] " + subject + "       " 
         if config.getboolean('email', 'bustgmailthreading'):
             subject += str(random.random())
-        message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" \
+        message = """From: %s\nTo: %s\nSubject: %s\n\n%s""" \
             % (FROM, ", ".join(to), subject, body)
 
         server = smtplib.SMTP(config.get('email', 'smtpserver'), config.get('email', 'smtpport'))
