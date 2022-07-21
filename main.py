@@ -46,12 +46,15 @@ if __name__ == "__main__":
     parser.add_argument('-v', action="store_true", help="Print verbose debugging information to the logfile")
     parser.add_argument('-d', action="store_true", help="Print verbose debugging information to stderr")
     parser.add_argument('--nomail', action="store_true", help="Do everything except sending email")
+    parser.add_argument('-f', '--config', help="Configuration file (default: settings.cfg)")
 
     args = parser.parse_args()
 
     config = configparser.ConfigParser()
-    configfile = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.cfg')
-    config.read(configfile)
+    if args.config:
+        config.read(args.config)
+    else:
+        config.read(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'settings.cfg'))
     if args.nomail:
         config.set('email', 'nomail', "True")
 
