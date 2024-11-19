@@ -64,6 +64,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--nomail", action="store_true", help="Do everything except sending email"
     )
+
     parser.add_argument(
         "-f", "--config", help="Configuration file (default: settings.cfg)"
     )
@@ -71,6 +72,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = configparser.ConfigParser()
+
     if args.config:
         config.read(args.config)
     else:

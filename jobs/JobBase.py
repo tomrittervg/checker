@@ -182,14 +182,17 @@ class JobBase(object):
 
         if not to:
             to = config.get("general", "alertcontact")
+
         if not isinstance(to, list):
             to = [to]
+
 
         # Prepare actual message
         # Avoid gmail threading
         subject = "[" + config.get("general", "servername") + "] " + subject + "       "
         if config.getboolean("email", "bustgmailthreading"):
             subject += str(random.random())
+
         message = """From: %s\nTo: %s\nSubject: %s\n\n%s""" % (
             FROM,
             ", ".join(to),
