@@ -10,11 +10,13 @@ import datetime
 
 import smtplib
 
+
 class JobFrequency(object):
     MINUTE = "minute"
     HOUR = "hour"
     DAY = "day"
     DAY_NOON = "day_noon"
+
 
 class JobFailureNotificationFrequency(object):
     EVERYTIME = "every"
@@ -24,11 +26,13 @@ class JobFailureNotificationFrequency(object):
     EVERYDAY = "day"
     ONSTATECHANGE = "state_change"
 
+
 class JobFailureCountMinimumBeforeNotification(object):
     ONE = 1
     TWO = 2
     FIVE = 5
     TEN = 10
+
 
 class JobBase(object):
     def __init__(self, config, *args):
@@ -37,16 +41,19 @@ class JobBase(object):
         self.stateName = base64.b64encode(statename.encode("utf-8")).decode("utf-8")
 
     """ Return a friendly name to identify this Job"""
+
     def getName(self):
         return str(self.__class__)
 
     """Return a non-friendly, guarenteed-unique name to identify this Job
        Needed to keep track of the job's run history. 
        Takes into account the contructor arguments to uniquely identify JobSpawner-jobs"""
+
     def getStateName(self):
         return self.stateName
 
     """Returns True if the job should execute this cron-run"""
+
     def shouldExecute(self, cronmodes):
         frequency = self.executeEvery()
         if frequency in cronmodes:
@@ -54,40 +61,49 @@ class JobBase(object):
         return False
 
     """Returns True if the jobmanager should call 'onFailure' to alert the admin after a job failed"""
+
     def shouldNotifyFailure(self, jobState):
         notifyFrequency = self.notifyOnFailureEvery()
         minFailureCount = self.numberFailuresBeforeNotification()
         currentFailureCount = jobState.NumFailures
 
         if 1 + currentFailureCount >= minFailureCount:
-            pass #keep evaluating
+            pass  # keep evaluating
         else:
-            return False #Do not notify
+            return False  # Do not notify
 
         if notifyFrequency == JobFailureNotificationFrequency.EVERYTIME:
             return True
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYFIVEMINUTES:
             now = time.time()
             lastNotify = jobState.LastNotifyTime
-            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(minutes=4, seconds=30):
+            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(
+                minutes=4, seconds=30
+            ):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYTENMINUTES:
             now = time.time()
             lastNotify = jobState.LastNotifyTime
-            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(minutes=9, seconds=15):
+            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(
+                minutes=9, seconds=15
+            ):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYHOUR:
             now = time.time()
             lastNotify = jobState.LastNotifyTime
-            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(minutes=59, seconds=0):
+            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(
+                minutes=59, seconds=0
+            ):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.EVERYDAY:
             now = time.time()
             lastNotify = jobState.LastNotifyTime
-            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(hours=23, minutes=50, seconds=0):
+            if datetime.timedelta(seconds=(now - lastNotify)) > datetime.timedelta(
+                hours=23, minutes=50, seconds=0
+            ):
                 return True
             return False
         elif notifyFrequency == JobFailureNotificationFrequency.ONSTATECHANGE:
@@ -100,29 +116,33 @@ class JobBase(object):
         return True
 
     """Helper method to send email"""
+
     def sendEmail(self, subject, body, to=""):
         return sendEmail(self.config, subject, body, to)
 
-
     """OVERRIDE ME
         Returns a JobFrequency indicating how often the job should be run."""
+
     def executeEvery(self):
         pass
 
     """OVERRIDE ME
         Returns a JobFailureNotificationFrequency indicating how often a failure 
         notification email should be sent"""
+
     def notifyOnFailureEvery(self):
         pass
 
     """OVERRIDE ME
         Returns a JobFailureCountMinimumBeforeNotification indicating how many 
         failures should occur before a notification email should be sent"""
+
     def numberFailuresBeforeNotification(self):
         pass
 
     """OVERRIDE ME
        Executes the job's actions, and returns true to indicate the job succeeded."""
+
     def execute(self):
         pass
 
@@ -130,6 +150,7 @@ class JobBase(object):
        Notify the admin the job failed. Returns True if the email could be 
        successfully sent.
        Example: return self.sendEmail(self.subject, self.body, self.notificationAddress)"""
+
     def onFailure(self):
         pass
 
@@ -139,33 +160,46 @@ class JobBase(object):
 
        Returns True if the email could be successfully sent.
        Example: return self.sendEmail(self.subject, self.body, self.notificationAddress)"""
+
     def onStateChangeSuccess(self):
         log.warn(self.getName() + " did not override onStateChangeSuccess")
         return True
 
-def sendEmail(config, subject, body, to=None):
-    if config.getboolean('email', 'nomail'):
-        logging.info("Not sending email with subject '" + subject + '" but pretending we did.\n' + body)
+    def sendEmail(config, subject, body, to=None):
+        if config.getboolean("email", "nomail"):
+            logging.info(
+                "Not sending email with subject '"
+                + subject
+                + '" but pretending we did.\n'
+                + body
+            )
+
         return True
 
     try:
-        FROM = config.get('email', 'user')
-        PASS = config.get('email', 'pass')
-    
+        FROM = config.get("email", "user")
+        PASS = config.get("email", "pass")
+
         if not to:
-            to = config.get('general', 'alertcontact')
+            to = config.get("general", "alertcontact")
         if not isinstance(to, list):
             to = [to]
 
         # Prepare actual message
         # Avoid gmail threading
-        subject = "[" + config.get('general', 'servername') + "] " + subject + "       " 
-        if config.getboolean('email', 'bustgmailthreading'):
+        subject = "[" + config.get("general", "servername") + "] " + subject + "       "
+        if config.getboolean("email", "bustgmailthreading"):
             subject += str(random.random())
-        message = """From: %s\nTo: %s\nSubject: %s\n\n%s""" \
-            % (FROM, ", ".join(to), subject, body)
+        message = """From: %s\nTo: %s\nSubject: %s\n\n%s""" % (
+            FROM,
+            ", ".join(to),
+            subject,
+            body,
+        )
 
-        server = smtplib.SMTP(config.get('email', 'smtpserver'), config.get('email', 'smtpport'))
+        server = smtplib.SMTP(
+            config.get("email", "smtpserver"), config.get("email", "smtpport")
+        )
         server.ehlo()
         server.starttls()
         server.login(FROM, PASS)

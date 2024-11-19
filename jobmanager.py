@@ -11,18 +11,23 @@ import requests
 from jobs import JobFinder, JobBase
 from jobstate import JobState
 
+
 class JobManager(object):
     def __init__(self, config):
         jobsFinder = JobFinder(config)
         self.jobs = jobsFinder.get_jobs()
         self.config = config
-        self.statefile = config.get('general', 'statefile')
+        self.statefile = config.get("general", "statefile")
         self._load_state()
 
     def _load_state(self):
         self.state = {}
         if not os.path.isfile(self.statefile):
-            logging.warn("Could not find statefile at " + self.statefile + "; creating a new one.")
+            logging.warn(
+                "Could not find statefile at "
+                + self.statefile
+                + "; creating a new one."
+            )
         else:
             f = open(self.statefile, "r")
             lines = f.readlines()
@@ -40,22 +45,33 @@ class JobManager(object):
 
     def list_jobs(self):
         return self.jobs
-    
+
     def execute_jobs(self, cronmodes):
         logging.info("Executing jobs...")
         emailWorks = True
         for thisJob in self.jobs:
             if thisJob.shouldExecute(cronmodes):
-                logging.info("Executing " + thisJob.getName() + "(" + thisJob.getStateName() + ")")
+                logging.info(
+                    "Executing "
+                    + thisJob.getName()
+                    + "("
+                    + thisJob.getStateName()
+                    + ")"
+                )
                 try:
                     lastRunStatus = self.state[thisJob.getStateName()]
                 except:
-                    logging.warn("No state was found for " + thisJob.getStateName() + \
-                                 ", making up a dummy state for it.")
-                    lastRunStatus = self.state[thisJob.getStateName()] = JobState.Empty(thisJob.getStateName(), thisJob.getName())
+                    logging.warn(
+                        "No state was found for "
+                        + thisJob.getStateName()
+                        + ", making up a dummy state for it."
+                    )
+                    lastRunStatus = self.state[thisJob.getStateName()] = JobState.Empty(
+                        thisJob.getStateName(), thisJob.getName()
+                    )
 
                 if not thisJob.execute():
-                    #Unsuccessful run
+                    # Unsuccessful run
                     logging.info("Execution of " + thisJob.getName() + " failed")
                     if thisJob.shouldNotifyFailure(lastRunStatus):
                         lastRunStatus.markFailedAndNotify()
@@ -63,28 +79,39 @@ class JobManager(object):
                         if not thisJob.onFailure():
                             emailWorks = False
                     else:
-                        logging.info("Skipping notification of failure for " + thisJob.getName())
+                        logging.info(
+                            "Skipping notification of failure for " + thisJob.getName()
+                        )
                         lastRunStatus.markFailedNoNotify()
                 else:
-                    #Successful Run
+                    # Successful Run
                     logging.info("Execution of " + thisJob.getName() + " succeeded")
-                    if lastRunStatus.CurrentStateSuccess == False and \
-                        thisJob.notifyOnFailureEvery() == JobBase.JobFailureNotificationFrequency.ONSTATECHANGE and \
-                        lastRunStatus.NumFailures >= thisJob.numberFailuresBeforeNotification():
-                        logging.info("Notifying of success (state change). " + str(lastRunStatus.NumFailures) + " >= " + str(thisJob.numberFailuresBeforeNotification()))
+                    if (
+                        lastRunStatus.CurrentStateSuccess == False
+                        and thisJob.notifyOnFailureEvery()
+                        == JobBase.JobFailureNotificationFrequency.ONSTATECHANGE
+                        and lastRunStatus.NumFailures
+                        >= thisJob.numberFailuresBeforeNotification()
+                    ):
+                        logging.info(
+                            "Notifying of success (state change). "
+                            + str(lastRunStatus.NumFailures)
+                            + " >= "
+                            + str(thisJob.numberFailuresBeforeNotification())
+                        )
                         if not thisJob.onStateChangeSuccess():
                             emailWorks = False
                     lastRunStatus.markSuccessful()
         self._save_state()
         return emailWorks
-        
+
     def mark_jobs_ran(self):
         logging.debug("Marking jobs as run successfully.")
         try:
             requests.post("http://localhost:5001/", data="True")
         except:
             pass
-            #Nothing we can do except hope our peers save us
+            # Nothing we can do except hope our peers save us
 
     def mark_jobs_ran_with_error(self):
         logging.warning("Marking jobs as run unsuccessfully.")
@@ -92,4 +119,4 @@ class JobManager(object):
             requests.post("http://localhost:5001/", data="False")
         except:
             pass
-            #Nothing we can do except hope our peers save us
+            # Nothing we can do except hope our peers save us

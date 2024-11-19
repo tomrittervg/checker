@@ -22,9 +22,9 @@ class JobFinder:
         """
         self._jobs = set()
         self.config = config
-        
+
         job_modules = self.get_job_modules_dynamic()
-        
+
         for module in job_modules:
             # Check every declaration in that module
             for name in dir(module):
@@ -32,11 +32,14 @@ class JobFinder:
                 if name not in module.__name__:
                     # Jobs have to have the same class name as their module name
                     continue
-                
+
                 if inspect.isclass(obj):
                     # A class declaration was found in that module
                     # Checking if it's a subclass of JobBase
-                    if obj != jobs.JobBase.JobBase and obj != jobs.JobSpawner.JobSpawner:
+                    if (
+                        obj != jobs.JobBase.JobBase
+                        and obj != jobs.JobSpawner.JobSpawner
+                    ):
                         logging.info(f"Found {obj}")
                         if issubclass(obj, jobs.JobBase.JobBase):
                             # A job was found, keep it
@@ -45,10 +48,10 @@ class JobFinder:
                             spawner = obj()
                             for j in spawner.get_sub_jobs(self.config):
                                 self._jobs.add(j)
-                                
+
     def get_job_modules_dynamic(self):
         job_modules = []
-        
+
         job_dir = jobs.__path__[0]
         full_job_dir = os.path.join(sys.path[0], job_dir)
         if os.path.exists(full_job_dir):
@@ -60,18 +63,20 @@ class JobFinder:
                     if module_name in jobs_loaded:
                         continue
                     jobs_loaded.append(module_name)
-                    full_name = os.path.splitext(source)[0].replace(os.path.sep, '.')
-                    
+                    full_name = os.path.splitext(source)[0].replace(os.path.sep, ".")
+
                     try:
                         # Try to import the job package
                         module = importlib.import_module(f"jobs.{full_name}")
                     except Exception as e:
                         logging.critical(f"Import Error on {module_name}: {repr(e)}")
                         logging.critical(traceback.format_exc())
-                        jobs.JobBase.sendEmail(self.config, f"Import Error on {module_name}", str(e))
+                        jobs.JobBase.sendEmail(
+                            self.config, f"Import Error on {module_name}", str(e)
+                        )
                         continue
                     job_modules.append(module)
         return job_modules
-                
+
     def get_jobs(self):
         return self._jobs
