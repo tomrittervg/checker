@@ -165,14 +165,14 @@ class JobBase(object):
         log.warn(self.getName() + " did not override onStateChangeSuccess")
         return True
 
-    def sendEmail(config, subject, body, to=None):
-        if config.getboolean("email", "nomail"):
-            logging.info(
-                "Not sending email with subject '"
-                + subject
-                + '" but pretending we did.\n'
-                + body
-            )
+def sendEmail(config, subject, body, to=None):
+    if config.getboolean("email", "nomail"):
+        logging.info(
+            "Not sending email with subject '"
+            + subject
+            + '" but pretending we did.\n'
+            + body
+        )
 
         return True
 
