@@ -89,6 +89,7 @@ if __name__ == "__main__":
         or not config.get("email", "smtpserver")
         or not config.get("email", "smtpport")
         or not config.get("email", "imapserver")
+        or not config.get("email", "imapmailbox")
     ):
         print("Sending email address is not configured")
         sys.exit(1)

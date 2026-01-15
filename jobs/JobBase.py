@@ -178,8 +178,9 @@ def sendEmail(config, subject, body, to=None):
         return True
 
     try:
-        FROM = config.get("email", "user")
+        USER = config.get("email", "user")
         PASS = config.get("email", "pass")
+        FROM = config.get("email", "from", fallback=USER)
 
         if not to:
             to = config.get("general", "alertcontact")
@@ -205,7 +206,7 @@ def sendEmail(config, subject, body, to=None):
         )
         server.ehlo()
         server.starttls()
-        server.login(FROM, PASS)
+        server.login(USER, PASS)
         server.sendmail(FROM, to, message)
         server.close()
         return True

@@ -5,6 +5,7 @@ import os
 import base64
 import datetime
 import logging
+import time
 
 import imaplib
 
@@ -28,6 +29,7 @@ class EmailChecker(JobBase.JobBase):
 
         USER = self.config.get("email", "user")
         PASS = self.config.get("email", "pass")
+        FROM = self.config.get("email", "from", fallback=USER)
 
         logdetails = ""
 
@@ -35,20 +37,24 @@ class EmailChecker(JobBase.JobBase):
         subj = base64.b64encode(os.urandom(20)).decode("utf-8")
         logdetails += "Target subject is " + subj + "\n\n"
 
-        if not self.sendEmail(subj, "", USER):
+        if not self.sendEmail(subj, "", FROM):
             return False
+
+        if self.config.has_option("email", "imapwait"):
+            wait = self.config.getint("email", "imapwait")
+            logdetails += f"Waiting {wait}s before imap login"
+            time.sleep(wait)
 
         M = imaplib.IMAP4_SSL(self.config.get("email", "imapserver"))
         M.login(USER, PASS)
 
-        # If we have set up a filter to auto-delete messages from ourself
-        if self.config.getboolean("email", "ideletesentmessagesautomatically"):
-            logdetails += "Switching to trash\n"
-            M.select("[Gmail]/Trash")
+        mailbox = self.config.get("email", "imapmailbox")
+        logdetails += f"Switching to {mailbox}\n"
+        M.select(mailbox)
 
         criteria = (
             '(FROM "'
-            + USER
+            + FROM
             + '" SINCE "'
             + (datetime.date.today() - datetime.timedelta(hours=24)).strftime(
                 "%d-%b-%Y"

@@ -8,12 +8,19 @@ statefile=/fully/qualified/path/jobrunhistory.db
 nomail=False
 user=agmailaccountyoucreate@gmail.com
 pass=yourpassword
+#Use a separate FROM as opposed to sending from $user (optional)
+#from=aseparatefromaddress@gmail.com
 smtpserver=smtp.gmail.com
 smtpport=587
 imapserver=imap.gmail.com
-#I create a filter that automatically deletes my sent messages.
-# This way, anyone who hacks the account only sees the last 30 days of messages I've sent
-ideletesentmessagesautomatically=True
+#Select mailbox for checker to read from.  Advice: create a filter that
+#automatically deletes messages in the selected inbox.  This way, anyone who
+#hacks the account only sees the last $DAYS of checker messages sent.  It also
+#avoids an inbox that grows continuously without any upper bound.  Note that
+#setting up a deletion filter is done with your email provider, not checker.
+imapmailbox=[Gmail]/Trash
+#Make checker wait 5s before reading emails from self in mailbox (optional)
+#imapwait=5
 #If set, append a random number to prevent gmail threading
 bustgmailthreading=False
 
