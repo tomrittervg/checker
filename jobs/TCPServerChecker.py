@@ -49,16 +49,17 @@ class TCPServerChecker(JobSpawner.JobSpawner):
             return self.failuresBeforeNotification
 
         def execute(self):
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.settimeout(10)
                 s.connect((self.ip, self.port))
-                s.close()
                 return True
-            except:
+            except Exception:
                 self.failuremsg = "Could not hit server " + self.friendlyName
                 logging.warn(self.failuremsg)
                 return False
+            finally:
+                s.close()
 
         def onFailure(self):
             return self.sendEmail(self.failuremsg, "")
