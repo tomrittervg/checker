@@ -162,7 +162,7 @@ class JobBase(object):
        Example: return self.sendEmail(self.subject, self.body, self.notificationAddress)"""
 
     def onStateChangeSuccess(self):
-        log.warn(self.getName() + " did not override onStateChangeSuccess")
+        logging.warning(self.getName() + " did not override onStateChangeSuccess")
         return True
 
 
