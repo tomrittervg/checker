@@ -24,10 +24,10 @@ class MetricsChecker(JobBase.JobBase):
         try:
             r = requests.get(url)
             this_consensus = str(ys.year) + "-" + str(ys.month).zfill(2) + "-" + str(ys.day).zfill(2) + "-12-00-00-consensus" 
-            if this_consensus in r.content:
+            if this_consensus in r.text:
                 pass
             else:
-                body = "Could not find 12-00-00-consensus in the body:\n\n" + r.content
+                body = "Could not find 12-00-00-consensus in the body:\n\n" + r.text
         except Exception as e:
             body = "Caught an exception:\n\n" + str(e)
         if body:

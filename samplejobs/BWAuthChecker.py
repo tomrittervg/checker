@@ -26,9 +26,9 @@ class BWAuthChecker(JobBase.JobBase):
         url = "https://bwauth.ritter.vg/bwauth/bwscan.V3BandwidthsFile"
         try:
             r = requests.get(url)
-            lines = r.content.split("\n")
+            lines = r.text.split("\n")
             if len(lines) < 1:
-                body = "Got no response for " + url + " from the server.\n\n" + r.content
+                body = "Got no response for " + url + " from the server.\n\n" + r.text
             else:
                 then = datetime.datetime.utcfromtimestamp(int(lines[0]))
                 now = datetime.datetime.utcfromtimestamp(time.time())
@@ -44,9 +44,9 @@ class BWAuthChecker(JobBase.JobBase):
         url = "https://bwauth.ritter.vg/bwauth/AA_percent-measured.txt"
         try:
             r = requests.get(url)
-            lines = r.content.split("\n")
+            lines = r.text.split("\n")
             if len(lines) < 1:
-                body += "\n\nGot no response for " + url + " from the server.\n\n" + r.content
+                body += "\n\nGot no response for " + url + " from the server.\n\n" + r.text
             else:
                 i = -1
                 while not lines[i].strip():
@@ -66,9 +66,9 @@ class BWAuthChecker(JobBase.JobBase):
         url = "https://bwauth.ritter.vg/bwauth/AA_scanner_loop_times.txt"
         try:
             r = requests.get(url)
-            lines = r.content.split("\n")
+            lines = r.text.split("\n")
             if len(lines) < 1:
-                body += "\n\nGot no response for " + url + " from the server.\n\n" + r.content
+                body += "\n\nGot no response for " + url + " from the server.\n\n" + r.text
             else:
                 this_scanner = 0
                 last_measured = None
