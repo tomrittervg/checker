@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
 from builtins import str
-import os
-import base64
 import logging
 import traceback
-import datetime
 
-import imaplib
 import requests
 
 from . import JobBase

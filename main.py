@@ -3,18 +3,12 @@
 from builtins import str
 import os
 import sys
-import json
-import pickle
-import hashlib
 import logging
 import traceback
 import argparse
-import binascii
 import configparser
 
-import requests
-
-from twisted.internet import reactor, ssl
+from twisted.internet import reactor
 from twisted.web import server
 
 from jobmanager import JobManager

@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
 from builtins import str
-import os
-import base64
 import logging
 import datetime 
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from builtins import str
-import os
 import socket
 import logging
 
