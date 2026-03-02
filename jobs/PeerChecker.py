@@ -47,7 +47,7 @@ class PeerChecker(JobSpawner.JobSpawner):
                     self.subject = (
                         self.checkurl + " returned a non-standard status code."
                     )
-                    self.body = str(response.status_code) + "\n" + response.content
+                    self.body = str(response.status_code) + "\n" + response.text
                 else:
                     content = response.content.decode("utf-8")
                     if "True" in content:
