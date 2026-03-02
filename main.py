@@ -7,6 +7,7 @@ import json
 import pickle
 import hashlib
 import logging
+import traceback
 import argparse
 import binascii
 import configparser
@@ -140,5 +141,5 @@ if __name__ == "__main__":
                 logging.critical(
                     "Caught an exception trying to execute jobs:" + repr(e)
                 )
-                logging.critical(logging.traceback.format_exc())
+                logging.critical(traceback.format_exc())
                 jobManager.mark_jobs_ran_with_error()

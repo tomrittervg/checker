@@ -6,6 +6,7 @@ import time
 import random
 import base64
 import logging
+import traceback
 import datetime
 
 import smtplib
@@ -211,5 +212,5 @@ def sendEmail(config, subject, body, to=None):
         return True
     except Exception as e:
         logging.critical("Caught an exception trying to send an email:" + repr(e))
-        logging.critical(logging.traceback.format_exc())
+        logging.critical(traceback.format_exc())
         return False

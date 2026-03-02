@@ -4,6 +4,7 @@ from builtins import str
 import os
 import base64
 import logging
+import traceback
 import datetime
 
 import imaplib
@@ -70,7 +71,7 @@ class PeerChecker(JobSpawner.JobSpawner):
                 peerOK = False
                 self.subject = self.checkurl + " is not responding."
                 self.body = repr(e) + "\n"
-                self.body += logging.traceback.format_exc()
+                self.body += traceback.format_exc()
             return peerOK
 
         def onFailure(self):

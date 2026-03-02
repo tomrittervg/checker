@@ -5,6 +5,7 @@ import ssl
 import time
 import calendar
 import logging
+import traceback
 import http.client
 import OpenSSL
 import datetime
@@ -82,7 +83,7 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
                     "Could not get server certificate " + self.url + "\n" + str(e)
                 )
                 logging.warn(self.failuremsg)
-                logging.warn(logging.traceback.format_exc())
+                logging.warn(traceback.format_exc())
                 return False
 
         def onFailure(self):

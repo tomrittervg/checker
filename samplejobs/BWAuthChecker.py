@@ -8,6 +8,7 @@ import re
 import time
 import base64
 import logging
+import traceback
 import datetime 
 
 import requests
@@ -39,7 +40,7 @@ class BWAuthChecker(JobBase.JobBase):
                     body = "The bandwidth file has a low number of relays: " + str(len(lines)) + "\n"
         except Exception as e:
             body = "Caught an exception checking the bwandwidth file timestamp:\n\n" + repr(e)
-            body += "\n" + logging.traceback.format_exc()
+            body += "\n" + traceback.format_exc()
 
         url = "https://bwauth.ritter.vg/bwauth/AA_percent-measured.txt"
         try:
@@ -60,7 +61,7 @@ class BWAuthChecker(JobBase.JobBase):
                         body += "\n\nMeasured percentant of all tor nodes is low: " + str(percent)
         except Exception as e:
             body += "\n\nCaught an exception measuring the percentage of relays measured:\n\n" + str(e)
-            body += "\n" + logging.traceback.format_exc()
+            body += "\n" + traceback.format_exc()
                     
 
         url = "https://bwauth.ritter.vg/bwauth/AA_scanner_loop_times.txt"
@@ -89,7 +90,7 @@ class BWAuthChecker(JobBase.JobBase):
                         body += "Scanner " + str(t) + " appears to be several days behind schedule."
         except Exception as e:
             body += "\n\nCaught an exception measuring the scanner loop times:\n\n" + str(e)
-            body += "\n" + logging.traceback.format_exc()
+            body += "\n" + traceback.format_exc()
 
         if body:
             logging.warn("tor bwauth is broken?")
