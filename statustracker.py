@@ -11,7 +11,7 @@ class StatusTracker(object):
 
     def __init__(self, config):
         self.emailNotificationsAreWorking = False
-        self.lastRunJob = 0
+        self.lastRunJob = time.time()
         self.config = config
 
     def isMailGood(self):
