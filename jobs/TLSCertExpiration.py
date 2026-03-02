@@ -3,6 +3,7 @@
 from builtins import str
 import ssl
 import time
+import calendar
 import logging
 import http.client
 import OpenSSL
@@ -59,7 +60,7 @@ class TLSCertExpiration(JobSpawner.JobSpawner):
                 x509 = OpenSSL.crypto.load_certificate(
                     OpenSSL.crypto.FILETYPE_ASN1, asn1
                 )
-                na = time.mktime(
+                na = calendar.timegm(
                     time.strptime(
                         x509.get_notAfter()[:-1].decode("utf-8"), "%Y%m%d%H%M%S"
                     )
