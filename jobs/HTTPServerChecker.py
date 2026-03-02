@@ -55,7 +55,7 @@ class HTTPServerChecker(JobSpawner.JobSpawner):
                     )
                 else:
                     return True
-            except:
+            except Exception:
                 self.failuremsg = "Could not hit server " + self.url
             logging.warn(self.failuremsg)
             return False
