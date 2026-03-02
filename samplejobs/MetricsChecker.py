@@ -15,6 +15,8 @@ class MetricsChecker(JobBase.JobBase):
         return JobBase.JobFrequency.DAY_NOON
     def notifyOnFailureEvery(self):
         return JobBase.JobFailureNotificationFrequency.EVERYTIME
+    def numberFailuresBeforeNotification(self):
+        return JobBase.JobFailureCountMinimumBeforeNotification.ONE
     def execute(self):
         body = ""
         ys = datetime.date.today() - datetime.timedelta(hours=24)

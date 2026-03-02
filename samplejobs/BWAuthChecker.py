@@ -19,6 +19,8 @@ class BWAuthChecker(JobBase.JobBase):
         return JobBase.JobFrequency.HOUR
     def notifyOnFailureEvery(self):
         return JobBase.JobFailureNotificationFrequency.EVERYTIME
+    def numberFailuresBeforeNotification(self):
+        return JobBase.JobFailureCountMinimumBeforeNotification.ONE
     def execute(self):
         body = ""
         url = "https://bwauth.ritter.vg/bwauth/bwscan.V3BandwidthsFile"

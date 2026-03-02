@@ -43,7 +43,16 @@ class JobFinder:
                         logging.info(f"Found {obj}")
                         if issubclass(obj, jobs.JobBase.JobBase):
                             # A job was found, keep it
-                            self._jobs.add(obj(self.config))
+                            instance = obj(self.config)
+                            try:
+                                instance.executeEvery()
+                                instance.notifyOnFailureEvery()
+                                instance.numberFailuresBeforeNotification()
+                            except NotImplementedError as e:
+                                logging.critical(f"Job {name} is missing required methods: {e}")
+                                jobs.JobBase.sendEmail(self.config, f"Incomplete job: {name}", str(e))
+                                continue
+                            self._jobs.add(instance)
                         elif issubclass(obj, jobs.JobSpawner.JobSpawner):
                             spawner = obj()
                             for j in spawner.get_sub_jobs(self.config):

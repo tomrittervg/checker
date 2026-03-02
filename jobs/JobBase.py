@@ -124,21 +124,21 @@ class JobBase(object):
         Returns a JobFrequency indicating how often the job should be run."""
 
     def executeEvery(self):
-        pass
+        raise NotImplementedError(f"{self.__class__.__name__} must implement executeEvery()")
 
     """OVERRIDE ME
-        Returns a JobFailureNotificationFrequency indicating how often a failure 
+        Returns a JobFailureNotificationFrequency indicating how often a failure
         notification email should be sent"""
 
     def notifyOnFailureEvery(self):
-        pass
+        raise NotImplementedError(f"{self.__class__.__name__} must implement notifyOnFailureEvery()")
 
     """OVERRIDE ME
-        Returns a JobFailureCountMinimumBeforeNotification indicating how many 
+        Returns a JobFailureCountMinimumBeforeNotification indicating how many
         failures should occur before a notification email should be sent"""
 
     def numberFailuresBeforeNotification(self):
-        pass
+        raise NotImplementedError(f"{self.__class__.__name__} must implement numberFailuresBeforeNotification()")
 
     """OVERRIDE ME
        Executes the job's actions, and returns true to indicate the job succeeded."""
